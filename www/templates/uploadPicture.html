@@ -1,0 +1,32 @@
+<ion-view title="Upload Picture">
+    <ion-nav-buttons side="left">
+        <button menu-toggle="left" class="button button-icon icon ion-navicon"></button>
+    </ion-nav-buttons>
+    <ion-content class="has-header padding scroll">
+        <div class="list">
+            <form name="myForm">
+                <item class="item item-icon-left"><i class="icon ion-chatbubble-working"></i>
+                    Picture's name
+                    <label class="item item-input">
+                        <textarea ng-model="obj.name" name="posttext" rows="1"></textarea>
+                    </label>
+                </item>
+                <div class="item">
+                    <div class="button-bar">
+                        <button class="button button-block button-positive icon-left ion-ios7-camera"
+                                ng-click="takePicture()">Camera
+                        </button>
+                        <button class="button button-block button-positive icon-left ion-ios7-camera"
+                                ng-click="PickPicture()">Pick a Picture
+                        </button>
+                    </div>
+                </div>
+                <div class="padding">
+                    <button class="button button-block button-positive icon-right ion-chevron-right"
+                            ng-show="canUpload" ng-click="upload()">Upload
+                    </button>
+                </div>
+            </form>
+        </div>
+    </ion-content>
+</ion-view>
