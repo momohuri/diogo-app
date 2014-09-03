@@ -2,8 +2,8 @@
  * Created by mlengl1 on 8/16/14.
  */
 
-var url = "http://diogo-api.nodejitsu.com/";
-//var url = 'http://localhost:8000/';
+//var url = "http://diogo-api.nodejitsu.com/";
+var url = 'http://localhost:8000/';
 if (!window.device)window.device = {};
 if (!window.device.uuid)window.device.uuid = 123;
 
@@ -26,24 +26,35 @@ angular.module('services', ['ngResource'])
             isLogged: {method: "POST", "url": url + "isLogged"}
         })
     }])
-    .factory('Location', ['$http', function ($http) {
+    .factory('Location', ['$http', '$rootScope', function ($http, $rootScope) {
         var working = false;
         return  function (next) {
             if (!working) {
                 navigator.geolocation.getCurrentPosition(function (position) {
                         $http({method: 'GET', url: 'http://nominatim.openstreetmap.org/reverse?format=json&lat=' + position.coords.latitude + '&lon=' + position.coords.longitude + '&zoom=18&addressdetails=1'}).
                             success(function (data, status, headers, config) {
-                                next(data.address);
+                                $rootScope.myLocation = data.address;
+                                next();
                             })
                             .error(function (data) {
-                                alert(data);
+                                console.log('couldn\'t get location', data);
+                                next()
                             })
                     },
-                    function (err) {
-                        alert(err);
+                    function (data) {
+                        console.log('couldn\'t get location', data);
+                        next()
                     });
+            } else {
+                var maxAttempts = 3;
+
+                function wait() {
+                    setTimeout(function () {
+                        if (--maxAttempts || !$rootScope.myLocation)next();
+                        else wait();
+                    }, 500)
+                }
             }
-            next();
         }
     }]);
 

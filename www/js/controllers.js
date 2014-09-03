@@ -1,22 +1,20 @@
 angular.module('controllers', [])
 
-    .controller('AppCtrl', [ "$rootScope", "Location", function ( $rootScope, Location) {
+    .controller('AppCtrl', [ "$rootScope", "Location", function ($rootScope, Location) {
         if (!$rootScope.myLocation) {
-            Location(function (address) {
-                if (address)$rootScope.myLocation = address;
-            })
+            Location(function () {
+            });
         }
     }])
 
-    .controller('AppLoading', ['$state','$rootScope',  "Location",function ($state, $http, $rootScope,Location) {
+    .controller('AppLoading', ['$state', '$rootScope', "Location", function ($state, $rootScope, Location) {
+
         var value = window.localStorage.getItem("login");
-           debugger
         if (!$rootScope.myLocation) {
-            Location(function (address) {
-                if (address)$rootScope.myLocation = address;
+            Location(function () {
                 if (value) $state.go('app.vote');
-                else $state.go('login');
-            })
+                else $state.go('app.login');
+            });
         }
 
     }])
@@ -126,30 +124,15 @@ angular.module('controllers', [])
             if (!$rootScope.myLocation) {
                 setTimeout(function () {
                     $scope.$apply(function () {
-                        //getPictureToVote();
+                        getPictureToVote();
                     });
                 }, 100);
             } else {
-                Picture.getPicturesVote({"uuid": device.uui, "location": $rootScope.myLocation}, function (reply) {
-                    debugger
-                    $scope.pictures.push(new picture());
+                Picture.getPicturesVote({"uuid": device.uuid, "location": $rootScope.myLocation}, function (reply) {
+                    $scope.pictures = $scope.pictures.concat(reply);
+                    if ($scope.pictures.length < 5) getPictureToVote();
                 })
-
-                if ($scope.pictures.length < 5) getPictureToVote();
             }
-        }
-
-        function picture() {
-            var url = ["http://www2.unine.ch/files/content/users/merciers2/files/6-%20Lola_Bonobos_IMG_0466%20(Zanna%20Clay).JPG",
-                "http://lupusuva1phototherapy.com/wp-content/uploads/2013/11/bonobo.jpg",
-                "http://t0.gstatic.com/images?q=tbn:ANd9GcSR0unofGOXbbVxRMF2jg6X4VlIF2MVg5_sQyfketuWL5QO2NmeZQ"
-            ];
-            return {
-                "id": 123,
-                "user": {name: "Mo"},
-                picture: {url: url[Math.floor(Math.random() * 3)],
-                    name: "Bonobo", date: new Date()}
-            };
         }
 
 
