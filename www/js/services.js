@@ -2,8 +2,8 @@
  * Created by mlengl1 on 8/16/14.
  */
 
-//var url = "http://diogo-api.nodejitsu.com/";
-var url = 'http://localhost:8000/';
+var url = "http://diogo-api.nodejitsu.com/";
+//var url = 'http://localhost:8000/';
 if (!window.device)window.device = {};
 if (!window.device.uuid)window.device.uuid = 123;
 
@@ -12,8 +12,7 @@ angular.module('services', ['ngResource'])
 
     .factory('Picture', ['$resource', function ($resource) {
         return $resource('Picture', {}, {
-            upVote: {method: "GET", "url": url + "upVote"},
-            downVote: {method: "GET", "url": url + "downVote"},
+            vote: {method: "POST", "url": url + "vote"},
             uploadPicture: {method: "POST", "url": url + 'uploadPicture'},
             getPicturesVote: {method: "POST", "url": url + "getPicturesVote", isArray: true}
         })
@@ -27,33 +26,40 @@ angular.module('services', ['ngResource'])
         })
     }])
     .factory('Location', ['$http', '$rootScope', function ($http, $rootScope) {
-        var working = false;
+        $rootScope.findingLocation = false;
         return  function (next) {
-            if (!working) {
+            if (!$rootScope.findingLocation && !$rootScope.myLocation) {
+                $rootScope.findingLocation = true;
+//                $ionicPlatform.ready(function () {
                 navigator.geolocation.getCurrentPosition(function (position) {
                         $http({method: 'GET', url: 'http://nominatim.openstreetmap.org/reverse?format=json&lat=' + position.coords.latitude + '&lon=' + position.coords.longitude + '&zoom=18&addressdetails=1'}).
                             success(function (data, status, headers, config) {
+                                $rootScope.findingLocation = false;
                                 $rootScope.myLocation = data.address;
-                                next();
+                                next($rootScope.myLocation);
                             })
                             .error(function (data) {
+                                $rootScope.findingLocation = false;
                                 console.log('couldn\'t get location', data);
-                                next()
+                                next($rootScope.myLocation)
                             })
                     },
                     function (data) {
+                        $rootScope.findingLocation = false;
                         console.log('couldn\'t get location', data);
                         next()
                     });
+//                });
+            } else if ($rootScope.myLocation) {
+                next($rootScope.myLocation);
             } else {
-                var maxAttempts = 3;
-
                 function wait() {
                     setTimeout(function () {
-                        if (--maxAttempts || !$rootScope.myLocation)next();
+                        if ( $rootScope.myLocation) next($rootScope.myLocation);
                         else wait();
-                    }, 500)
+                    }, 1000)
                 }
+                wait();
             }
         }
     }]);

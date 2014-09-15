@@ -1,0 +1,39 @@
+<ion-view title="Sign Up">
+
+    <div class="bar bar-header bar-stable">
+        <h1 class="title">Sign Up</h1>
+    </div>
+
+
+    <ion-content class="has-header padding scroll">
+        <div class="list">
+
+            <form ng-submit="doSignIn()">
+                <div class="list">
+                    <label class="item item-input">
+                        <input type="text" ng-model="signIn.username" placeholder="Username">
+                    </label>
+                    <label class="item item-input">
+                        <input type="password" ng-model="signIn.password" placeholder="Password">
+                    </label>
+                    <label class="item item-input">
+                        <input type="password" ng-model="signIn.passwordVerify" placeholder="Verify Password">
+
+                    </label>
+
+                    <div class="ion-alert-circled" ng-show="errorsSignIn">{{errorsSignIn}}</div>
+
+                    <label class="item">
+                        <button class="button button-block button-positive" type="submit">Sign Up</button>
+                    </label>
+                </div>
+            </form>
+            <a ng-href="#/login">
+                <button class="button button-full button-stable">
+                    Log In
+                </button>
+            </a>
+
+        </div>
+    </ion-content>
+</ion-view>

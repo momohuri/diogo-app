@@ -1,21 +1,17 @@
 angular.module('controllers', [])
 
-    .controller('AppCtrl', [ "$rootScope", "Location", function ($rootScope, Location) {
-        if (!$rootScope.myLocation) {
-            Location(function () {
-            });
-        }
+    .controller('AppCtrl', [ "Location", function (Location) {
+
     }])
 
-    .controller('AppLoading', ['$state', '$rootScope', "Location", function ($state, $rootScope, Location) {
+    .controller('AppLoading', ['$state', "Location", function ($state, Location) {
 
         var value = window.localStorage.getItem("login");
-        if (!$rootScope.myLocation) {
-            Location(function () {
-                if (value) $state.go('app.vote');
-                else $state.go('app.login');
-            });
-        }
+        if (!value) $state.go('signin');
+        Location(function () {
+            if (value)$state.go('app.vote');
+        });
+
 
     }])
 
@@ -58,19 +54,23 @@ angular.module('controllers', [])
     }])
 
 
-    .controller('uploadPictureCtrl', ['$scope', '$http', 'Picture',
-        function ($scope, $http, Picture) {
+    .controller('uploadPictureCtrl', ['$scope', '$http', "$state", 'Picture',
+        function ($scope, $http, $state, Picture) {
             $scope.obj = {};
+            $scope.uploadind = false;
             var pictureSource;
-            $scope.PickPicture = function () {
-                pictureSource = navigator.camera.PictureSourceType.PHOTOLIBRARY;
-                processPicture()
-            };
+            //todo keep code for gallery, maybe one day
+//            $scope.PickPicture = function () {
+//                pictureSource = navigator.camera.PictureSourceType.PHOTOLIBRARY;
+//                processPicture()
+//            };
+
 
             $scope.takePicture = function () {
                 pictureSource = navigator.camera.PictureSourceType.CAMERA;
                 processPicture()
             };
+            $scope.takePicture();
             function processPicture() {
                 $scope.canUpload = true;
                 var options = {
@@ -85,55 +85,48 @@ angular.module('controllers', [])
                         $scope.mypicture = image64;
                     },
                     function (err) {
+                        $state.go('app.vote');
                         setTimeout(function () {
-                            alert(err)
+                            console.log(err);
                         }, 0);
                     },
                     options);
             }
 
             $scope.upload = function () {
+                $scope.uploadind = true;
                 var picture = {};
                 picture.name = $scope.obj.name;
                 picture.base64 = 'data:image/jpeg;base64,' + $scope.mypicture;
                 picture.location = $scope.myLocation;
                 Picture.uploadPicture({picture: picture, uuid: device.uuid}, function (reply) {
-                    debugger
+                    alert('You have submitted your picture');
+                    $scope.uploadind = false;
                 })
             }
 
         }])
 
-    .controller('VoteCtrl', ['$scope', '$rootScope', 'Picture', function ($scope, $rootScope, Picture) {
+    .controller('VoteCtrl', ['$scope', 'Location', 'Picture', function ($scope, Location, Picture) {
         $scope.pictures = [];
         getPictureToVote();
 
-        $scope.upVote = function (id) {
-            Picture.upVote(id);
+        $scope.vote = function (id, value) {
+            Location(function (location) {
+                Picture.vote({vote: {"pictureId": id, location: location, voteType: value}, "uuid": window.device.uuid}, function () {
+                    getPictureToVote();
+                });
+            });
             $scope.pictures.shift();
-            getPictureToVote();
         };
-        $scope.downVote = function (id) {
-            Picture.downVote(id);
-            $scope.pictures.shift();
-            getPictureToVote();
-        };
-
 
         function getPictureToVote() {
-            if (!$rootScope.myLocation) {
-                setTimeout(function () {
-                    $scope.$apply(function () {
-                        getPictureToVote();
-                    });
-                }, 100);
-            } else {
-                Picture.getPicturesVote({"uuid": device.uuid, "location": $rootScope.myLocation}, function (reply) {
-                    $scope.pictures = $scope.pictures.concat(reply);
-                    if ($scope.pictures.length < 5) getPictureToVote();
+            if ($scope.pictures.length < 5) {
+                Location(function (location) {
+                    Picture.getPicturesVote({"uuid": device.uuid, "location": location}, function (reply) {
+                        $scope.pictures = $scope.pictures.concat(reply);
+                    })
                 })
             }
         }
-
-
     }]);

@@ -35,15 +35,20 @@ angular.module('starter', ['ionic', 'controllers', 'services'])
                 controller: 'AppLoading'
 
             })
-            .state('app.login', {
+            .state('login', {
                 url: "/login",
-                views: {
-                    'menuContent': {
-                        templateUrl: "templates/login.html",
-                        controller: 'LoginCtrl'
-                    }
-                }
+                templateUrl: "templates/login.html",
+                controller: 'LoginCtrl'
+
             })
+            .state('signin', {
+                url: "/signin",
+                templateUrl: "templates/signin.html",
+                controller: 'LoginCtrl'
+
+
+            })
+
             .state('app.uploadPicture', {
                 url: "/uploadPicture",
                 views: {
