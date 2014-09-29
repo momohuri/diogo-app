@@ -1,0 +1,23 @@
+<ion-view title="Trending">
+    <ion-nav-buttons side="left">
+        <button menu-toggle="left" class="button button-icon icon ion-navicon"></button>
+    </ion-nav-buttons>
+    <ion-content class="has-header padding scroll">
+        <div class="list">
+            <!--todo this is a lot of code just tu put a loader on the center ..-->
+            <div class="row row-center" ng-show="loading">
+                <div class="col"></div>
+                <div class="col col-center">
+                    <i class="icon ion-loading-c"></i>
+                </div>
+            </div>
+
+            <div class="list" ng-repeat="(key,bestPicture) in bestPictures">
+                <a class="item item-thumbnail-left" ng-href="#/app/trending/{{key}}/{{bestPicture.name}}">
+                    <img ng-src="{{bestPicture.picture}}">
+                    <h2> {{bestPicture.name}}</h2>
+                </a>
+            </div>
+        </div>
+    </ion-content>
+</ion-view>

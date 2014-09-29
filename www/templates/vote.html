@@ -1,6 +1,12 @@
 <ion-view title="Vote">
     <ion-nav-buttons side="left">
         <button menu-toggle="left" class="button button-icon icon ion-navicon"></button>
+
+    </ion-nav-buttons>
+    <ion-nav-buttons side="right">
+
+        <p>{{ user.points | number}} pts</p>
+
     </ion-nav-buttons>
     <ion-content class="has-header">
         <!--todo this is a lot of code just tu put a loader on the center ..-->

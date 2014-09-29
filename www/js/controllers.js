@@ -107,9 +107,17 @@ angular.module('controllers', [])
 
         }])
 
-    .controller('VoteCtrl', ['$scope', 'Location', 'Picture', function ($scope, Location, Picture) {
+    .controller('VoteCtrl', ['$scope', 'Location', 'Picture', 'User', function ($scope, Location, Picture, User) {
         $scope.pictures = [];
         getPictureToVote();
+
+        $scope.user = {};
+        //todo make a call to api to get points
+
+
+        User.getPoints(function (points) {
+            $scope.user.points = points;
+        });
 
         $scope.vote = function (id, value) {
             Location(function (location) {
@@ -123,10 +131,34 @@ angular.module('controllers', [])
         function getPictureToVote() {
             if ($scope.pictures.length < 5) {
                 Location(function (location) {
-                    Picture.getPicturesVote({"uuid": device.uuid, "location": location}, function (reply) {
+                    Picture.getPicturesVote({"location": location}, function (reply) {
                         $scope.pictures = $scope.pictures.concat(reply);
                     })
                 })
             }
         }
+    }])
+
+    .controller('TrendingMenuCtrl', ['$scope', 'Location', 'Picture', function ($scope, Location, Picture) {
+        $scope.loading = true;
+        $scope.bestPictures =
+        {
+            county: {name: "San Francico", picture: "http://upload.wikimedia.org/wikipedia/commons/thumb/d/da/SF_From_Marin_Highlands3.jpg/500px-SF_From_Marin_Highlands3.jpg"},
+            state: {name: "California", picture: "http://www.songwriting-unlimited.com/images/cdoremi.gif"}
+        };
+        Location(function (location) {
+            $scope.location = location;
+            $scope.bestPictures = Picture.getTopOnePicture(location, function () {
+                $scope.loading = false;
+            });
+        });
+    }])
+
+    .controller('TrendingCtrl', ['$scope', '$stateParams', 'Picture', 'Location', function ($scope, $stateParams, Picture, Location) {
+        $scope.location = $stateParams;
+        Location(function (location) {
+            $scope.pictures = Picture.getTrendingPicture({type: $stateParams.locationType, location: location}, function (docs) {
+
+            })
+        });
     }]);
