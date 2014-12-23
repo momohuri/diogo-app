@@ -1,1 +1,10 @@
 /* Empty. Add your own CSS if you like */
+
+.item-picture {
+
+}
+
+.button-borders {
+    border-left-width: 1px;
+    border-right-width: 1px;
+}

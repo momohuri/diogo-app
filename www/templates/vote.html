@@ -10,40 +10,54 @@
     </ion-nav-buttons>
     <ion-content class="has-header">
         <!--todo this is a lot of code just tu put a loader on the center ..-->
-        <div class="row row-center" ng-show="pictures.length ==0">
+        <div class="row row-center" ng-show="pictures.length == 0">
             <div class="col"></div>
             <div class="col col-center">
                 <i class="icon ion-loading-c"></i>
             </div>
         </div>
-        <div class="list card" ng-repeat="picture in pictures" ng-show="$first">
+        <div class="list" ng-repeat="picture in pictures" ng-show="$first">
 
-            <div class="item item-avatar">
-                <h2>{{picture.name}}</h2>
-
-                <p>{{picture.date | date}}</p>
-            </div>
-
-            <div class="item item-body">
+            <div class="item-picture">
                 <img class="full-image" ng-src="{{picture.url}}">
 
-                <p>
-                    {{picture.name}}
-                </p>
+
+                <div class="row">
+                    <div class="col .col-50 col-offset-50">
+                        <i class="icon ion-location"></i>
+                        San bruno, CA, USA
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col col-33">Mateus</div>
+                    <div class="col col-33 col-offset-33">
+                        <small>45 min ago</small>
+                    </div>
+                </div>
+
+
+                <div class="item">
+                    <h2>My picture</h2>
+
+                    <p>the big rabbit is big</p>
+                </div>
+
 
             </div>
-
-            <div class="item tabs tabs-secondary tabs-icon-left">
-                <a class="tab-item" ng-click="vote(picture._id,true)">  <!-- change with id-->
-                    <i class="icon ion-thumbsup"></i>
-                    Like
-                </a>
-                <a class="tab-item" ng-click="vote(picture._id,false)">
-                    <i class="icon ion-thumbsdown"></i>
-                    Don't like
-                </a>
-            </div>
-
         </div>
+
+
     </ion-content>
+
+    <div class="bar bar-footer">
+        <a class="tab-item" ng-click="vote(pictures[0]._id,false)">
+            <i class="icon ion-thumbsdown"></i>
+            Dislike
+        </a>
+        <a class="tab-item" ng-click="vote(pictures[0]._id,true)">
+            <i class="icon ion-thumbsup"></i>
+            Like
+        </a>
+    </div>
 </ion-view>

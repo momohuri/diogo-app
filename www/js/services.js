@@ -16,7 +16,7 @@ angular.module('services', ['ngResource'])
             uploadPicture: {method: "POST", "url": url + 'uploadPicture'},
             getPicturesVote: {method: "POST", "url": url + "getPicturesVote", isArray: true},
             getTopOnePicture: {method: "POST", "url": url + "getTopOnePicture"},
-            getTrendingPicture: {method: "POST", "url": url + "getTrendingPicture", isArray: true}
+            getTrendingPicture: {method: "POST", "url": url + "getTrendingPicture"}
         })
     }
     ])

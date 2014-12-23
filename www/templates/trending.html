@@ -12,8 +12,13 @@
                 </div>
             </div>
         </div>
-        <div ng-repeat="picture in pictures">
-            {{picture}}
+        <div ng-repeat="picture in pictures | orderBy:'rank'" >
+            <div class="item item-thumbnail-left">
+                <img ng-src="{{picture.url}}">
+                <h2> {{picture.name}}</h2>
+                <p>score : {{picture.score}}, rank: {{picture.rank}}</p>
+            </div>
+
         </div>
     </ion-content>
 </ion-view>
