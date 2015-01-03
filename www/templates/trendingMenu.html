@@ -12,11 +12,11 @@
                 </div>
             </div>
 
-            <div class="list" ng-repeat="(key,bestPicture) in bestPictures">
-                <a class="item item-thumbnail-left" ng-href="#/app/trending/{{key}}/{{bestPicture.name}}">
-                    <img ng-src="{{bestPicture.picture}}">
-                    <h2> {{bestPicture.name}}</h2>
-                    <p>{{key}}</p>
+            <div class="list" ng-repeat="(key,value) in ['country','state','county']">
+                <a class="item item-thumbnail-left" ng-href="#/app/trending/{{value}}/{{bestPictures[value].name}}">
+                    <img ng-src="{{bestPictures[value].picture}}">
+                    <h2> {{bestPictures[value].name}}</h2>
+                    <p>{{value}}</p>
                 </a>
             </div>
         </div>

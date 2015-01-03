@@ -3,6 +3,7 @@
 /* Directives */
 
 
-angular.module('directives', [])
+angular.module('directives', []);
+
 
 

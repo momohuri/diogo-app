@@ -4,7 +4,7 @@
 // 'starter' is the name of this angular module example (also set in a <body> attribute in index.html)
 // the 2nd parameter is an array of 'requires'
 // 'starter.controllers' is found in controllers.js
-angular.module('starter', ['ionic', 'controllers', 'services','directives'])
+angular.module('starter', ['ionic', 'controllers', 'services', 'directives', 'Filters','pascalprecht.translate'])
 
     .run(function ($ionicPlatform) {
         $ionicPlatform.ready(function () {
@@ -57,7 +57,9 @@ angular.module('starter', ['ionic', 'controllers', 'services','directives'])
                         controller: 'uploadPictureCtrl'
                     }
                 }
+
             })
+
             .state('app.vote', {
                 url: "/vote",
                 views: {
@@ -73,6 +75,7 @@ angular.module('starter', ['ionic', 'controllers', 'services','directives'])
                     'menuContent': {
                         templateUrl: "templates/trendingMenu.html",
                         controller: 'TrendingMenuCtrl'
+
                     }
                 }
             }).state('app.trending', {
@@ -83,8 +86,30 @@ angular.module('starter', ['ionic', 'controllers', 'services','directives'])
                         controller: 'TrendingCtrl'
                     }
                 }
+            }).state('app.picture', {
+                url: "/picture/:locationType/:pictureNo",
+                views: {
+                    'menuContent': {
+                        templateUrl: "templates/picture.html",
+                        controller: 'PictureCtrl'
+                    }
+                }
             });
         // if none of the above states are matched, use this as the fallback
         $urlRouterProvider.otherwise('/loading');
-    });
+    })
 
+    .config(function ($httpProvider) {
+        $httpProvider.interceptors.push(function ($rootScope) {
+            return {
+                request: function (config) {
+                    $rootScope.$broadcast('loading:show');
+                    return config
+                },
+                response: function (response) {
+                    $rootScope.$broadcast('loading:hide');
+                    return response
+                }
+            }
+        })
+    });

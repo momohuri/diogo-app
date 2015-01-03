@@ -19,28 +19,27 @@
         <div class="list" ng-repeat="picture in pictures" ng-show="$first">
 
             <div class="item-picture">
-                <img class="full-image" ng-src="{{picture.url}}">
-
+                <div class="row row-center">
+                <img class="full_screen_img" ng-src="{{picture.url}}" ng-style="{'max-height':height,'width':'auto'}">
+                </div>
 
                 <div class="row">
-                    <div class="col .col-50 col-offset-50">
+                    <div class="col col-50 col-offset-40">
                         <i class="icon ion-location"></i>
-                        San bruno, CA, USA
+                        {{ picture.location.county}}, {{picture.location.country_code | uppercase}}
                     </div>
                 </div>
 
                 <div class="row">
-                    <div class="col col-33">Mateus</div>
+                    <div class="col col-33">{{picture.userId.username | capitalize}}</div>
                     <div class="col col-33 col-offset-33">
-                        <small>45 min ago</small>
+                        <small>{{picture.date | timeago}}</small>
                     </div>
                 </div>
 
 
                 <div class="item">
-                    <h2>My picture</h2>
-
-                    <p>the big rabbit is big</p>
+                    <h2>{{picture.name}}</h2>
                 </div>
 
 

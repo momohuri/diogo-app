@@ -8,3 +8,8 @@
     border-left-width: 1px;
     border-right-width: 1px;
 }
+
+.full_screen_img {
+    max-height: 50vh;
+    width:auto;
+}

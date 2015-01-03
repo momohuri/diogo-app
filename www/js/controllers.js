@@ -4,13 +4,14 @@ angular.module('controllers', [])
 
     }])
 
-    .controller('AppLoading', ['$state', "Location", function ($state, Location) {
-
+    .controller('AppLoading', ['$state', "Location", "$ionicLoading", function ($state, Location, $ionicLoading) {
+        $ionicLoading.show();
         var value = window.localStorage.getItem("login");
         if (!value) $state.go('signin');
-        Location(function () {
-            if (value)$state.go('app.vote');
-        });
+       // Location(function () {
+            $ionicLoading.hide();
+            if (value)$state.go('app.trendingMenu');
+        //});
 
 
     }])
@@ -27,7 +28,7 @@ angular.module('controllers', [])
             User.logIn($scope.logIn, function (reply) {
                 if (reply.success) {
                     window.localStorage.setItem("login", true);
-                    $state.go('app.vote');
+                    $state.go('app.trendingMenu');
                 }
                 else $scope.errorsLogIn = reply.err;
             })
@@ -54,10 +55,11 @@ angular.module('controllers', [])
     }])
 
 
-    .controller('uploadPictureCtrl', ['$scope', '$http', "$state", 'Picture',
-        function ($scope, $http, $state, Picture) {
+    .controller('uploadPictureCtrl', ['$scope', '$http', "$state", '$ionicPopup', 'Picture',
+        function ($scope, $http, $state, $ionicPopup, Picture) {
+
             $scope.obj = {};
-            $scope.uploadind = false;
+            $scope.uploading = false;
             var pictureSource;
             //todo keep code for gallery, maybe one day
 //            $scope.PickPicture = function () {
@@ -70,11 +72,15 @@ angular.module('controllers', [])
                 pictureSource = navigator.camera.PictureSourceType.CAMERA;
                 processPicture()
             };
+            $state.get('app.uploadPicture').onEnter = function () {
+                $scope.takePicture();
+            };
             $scope.takePicture();
+
             function processPicture() {
                 $scope.canUpload = true;
                 var options = {
-                    quality: 1,
+                    quality: 50,
                     destinationType: Camera.DestinationType.DATA_URL,
                     sourceType: pictureSource,
                     encodingType: Camera.EncodingType.JPEG,
@@ -94,32 +100,38 @@ angular.module('controllers', [])
             }
 
             $scope.upload = function () {
-                $scope.uploadind = true;
+                $scope.uploading = true;
                 var picture = {};
                 picture.name = $scope.obj.name;
                 picture.base64 = 'data:image/jpeg;base64,' + $scope.mypicture;
                 picture.location = $scope.myLocation;
                 Picture.uploadPicture({picture: picture, uuid: device.uuid}, function (reply) {
-                    alert('You have submitted your picture');
-                    $scope.uploadind = false;
+                    var alertPopup = $ionicPopup.alert({
+                        title: 'Picture successfully uploaded'
+                    });
+                    alertPopup.then(function (res) {
+                        $scope.uploading = false;
+                        $state.go('app.trendingMenu');
+                    });
+
                 })
             }
 
         }])
 
     .controller('VoteCtrl', ['$scope', 'Location', 'Picture', 'User', function ($scope, Location, Picture, User) {
+        $scope.height = document.getElementsByTagName('ion-content')[0].clientHeight / 1.5 + 'px';
         $scope.pictures = [];
         getPictureToVote();
 
         $scope.user = {};
-        //todo make a call to api to get points
-
 
         User.getPoints(function (points) {
             $scope.user.points = points;
         });
 
         $scope.vote = function (id, value) {
+            ++$scope.user.points;
             Location(function (location) {
                 Picture.vote({
                     vote: {"pictureId": id, location: location, voteType: value},
@@ -144,14 +156,7 @@ angular.module('controllers', [])
 
     .controller('TrendingMenuCtrl', ['$scope', 'Location', 'Picture', function ($scope, Location, Picture) {
         $scope.loading = true;
-        $scope.bestPictures =
-        {
-            county: {
-                name: "San Francico",
-                picture: "http://upload.wikimedia.org/wikipedia/commons/thumb/d/da/SF_From_Marin_Highlands3.jpg/500px-SF_From_Marin_Highlands3.jpg"
-            },
-            state: {name: "California", picture: "http://www.songwriting-unlimited.com/images/cdoremi.gif"}
-        };
+        $scope.bestPictures = [];
         Location(function (location) {
             $scope.location = location;
             $scope.bestPictures = Picture.getTopOnePicture({location: location}, function () {
@@ -160,11 +165,51 @@ angular.module('controllers', [])
         });
     }])
 
-    .controller('TrendingCtrl', ['$scope', '$stateParams', 'Picture', 'Location', function ($scope, $stateParams, Picture, Location) {
-        $scope.location = $stateParams;
-        Location(function (location) {
-            Picture.getTrendingPicture({type: $stateParams.locationType, location: location}, function (docs) {
-                $scope.pictures = docs.pictures;
-            })
+    .controller('TrendingCtrl', ['$scope', '$stateParams', '$ionicHistory', '$state', 'Picture', 'Location',
+        function ($scope, $stateParams, $ionicHistory, $state, Picture, Location) {
+            $scope.location = $stateParams;
+            $scope.goBack = function(){
+                $state.go('app.trendingMenu');
+            };
+            $scope.locationType = $stateParams.locationType;
+            Location(function (location) {
+                Picture.getTrendingPicture({type: $stateParams.locationType, location: location}, function (docs) {
+                    $scope.pictures = docs.pictures;
+                })
+            });
+        }])
+
+    .controller('PictureCtrl', ['$scope', '$stateParams', '$ionicHistory', 'Picture', 'User', function ($scope, $stateParams, $ionicHistory, Picture, User) {
+        $scope.height = document.getElementsByTagName('ion-content')[0].clientHeight / 1.5 + 'px';
+        $scope.goBack = $ionicHistory.goBack;
+        var pictureNo = parseInt($stateParams.pictureNo);
+        $scope.picture = Picture.getPicture(pictureNo);
+        $scope.user = {};
+        User.getPoints(function (points) {
+            $scope.user.points = points;
         });
+
+        var canDo = true;
+        $scope.right = function () {
+            if (canDo) {
+                if (Picture.pictureExist(pictureNo - 1)) {
+                    $scope.picture = Picture.getPicture(--pictureNo);
+                    canDo = false;
+                    setTimeout(function () {
+                        canDo = true
+                    }, 500)
+                }
+            }
+        };
+        $scope.left = function () {
+            if (canDo) {
+                if (Picture.pictureExist(pictureNo + 1)) {
+                    $scope.picture = Picture.getPicture(++pictureNo);
+                    canDo = false;
+                    setTimeout(function () {
+                        canDo = true
+                    }, 500)
+                }
+            }
+        }
     }]);
