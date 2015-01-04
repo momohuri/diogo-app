@@ -138,12 +138,14 @@ angular.module('starter', ['ionic', 'controllers', 'services', 'directives', 'Fi
             'LOGIN_BUTTON_TO_SIGNUP': 'Sign Up',
             'LOGIN_PLACEHOLDER_VERIFY_PASSWORD': 'Verify your password',
 
-            'PICTURE_PAGE_NAME': 'Picture Details',
+            'PICTURE_PAGE_NAME': 'Details',
 
             'TRENDING_PAGE_TITLE': 'Top in ',
             'TRENDING_RANK': 'Rank',
             'TRENDING_SCORE': 'Score',
 
+            'UPLOAD_MESSAGE_SUCCESSFUL':'Awesome! Upload Successful.',
+            'UPLOAD_MESSAGE_FAIL':'Shoot, that didn\'t work. Please try again later'
             'UPLOAD_MESSAGE_SUCCESSFUL': 'Awesome! Upload Successful',
             'UPLOAD_MESSAGE_FAIL': 'Shoot, that didn\'t work. Please try again later',
 
