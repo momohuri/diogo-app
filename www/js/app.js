@@ -147,7 +147,7 @@ angular.module('starter', ['ionic', 'controllers', 'services', 'directives', 'Fi
             'UPLOAD_MESSAGE_SUCCESSFUL': 'Awesome! Upload Successful.',
             'UPLOAD_MESSAGE_FAIL': 'Shoot, that didn\'t work. Please try again later.',
 
-            'VOTE_MESSAGE_NO_MORE_PICTURE':'No more nearby posts to vote on. Thanks giving back to the community!'
+            'VOTE_MESSAGE_NO_MORE_PICTURE':'No more nearby posts. Thanks for voting!'
 
 
         });
