@@ -144,8 +144,6 @@ angular.module('starter', ['ionic', 'controllers', 'services', 'directives', 'Fi
             'TRENDING_RANK': 'Rank',
             'TRENDING_SCORE': 'Score',
 
-            'UPLOAD_MESSAGE_SUCCESSFUL':'Awesome! Upload Successful.',
-            'UPLOAD_MESSAGE_FAIL':'Shoot, that didn\'t work. Please try again later'
             'UPLOAD_MESSAGE_SUCCESSFUL': 'Awesome! Upload Successful',
             'UPLOAD_MESSAGE_FAIL': 'Shoot, that didn\'t work. Please try again later',
 
