@@ -144,8 +144,8 @@ angular.module('starter', ['ionic', 'controllers', 'services', 'directives', 'Fi
             'TRENDING_RANK': 'Rank',
             'TRENDING_SCORE': 'Score',
 
-            'UPLOAD_MESSAGE_SUCCESSFUL':'',
-            'UPLOAD_MESSAGE_FAIL':''
+            'UPLOAD_MESSAGE_SUCCESSFUL':'Upload Successful',
+            'UPLOAD_MESSAGE_FAIL':'Shoot, that didn\'t work. Please try again later'
 
         });
 
