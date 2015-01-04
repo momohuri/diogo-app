@@ -20,20 +20,23 @@
 
             <div class="item-picture">
                 <div class="row row-center">
-                <img class="full_screen_img" ng-src="{{picture.url}}" ng-style="{'max-height':height,'width':'auto'}">
+                    <img class="full_screen_img" ng-src="{{picture.url}}"
+                         ng-style="{'max-height':height,'width':'auto'}">
                 </div>
 
                 <div class="row">
                     <div class="col col-50 col-offset-40">
                         <i class="icon ion-location"></i>
-                        {{ picture.location.county}}, {{picture.location.country_code | uppercase}}
+                        {{ picture.location.county}}
                     </div>
                 </div>
 
                 <div class="row">
-                    <div class="col col-33">{{picture.userId.username | capitalize}}</div>
+                    <div class="col col-33"><i class="icon ion-person"></i> {{picture.userId.username | capitalize}}
+                    </div>
                     <div class="col col-33 col-offset-33">
-                        <small>{{picture.date | timeago}}</small>
+                        <i class="icon ion-clock"></i>
+                        <small> {{picture.date | timeago}}</small>
                     </div>
                 </div>
 
@@ -50,13 +53,12 @@
     </ion-content>
 
     <div class="bar bar-footer">
-        <a class="tab-item" ng-click="vote(pictures[0]._id,false)">
+        <a class="tab-item col-50" ng-click="vote(pictures[0]._id,false)">
             <i class="icon ion-thumbsdown"></i>
-            Dislike
         </a>
-        <a class="tab-item" ng-click="vote(pictures[0]._id,true)">
+        |
+        <a class="tab-item col-50" ng-click="vote(pictures[0]._id,true)">
             <i class="icon ion-thumbsup"></i>
-            Like
         </a>
     </div>
 </ion-view>

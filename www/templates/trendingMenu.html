@@ -12,9 +12,7 @@
                 </div>
             </div>
 
-            <div class="list" ng-repeat="(key,value) in ['country','state','county']" nh-show="!loading">
-
-                {{lol}}
+            <div class="list" ng-repeat="(key,value) in ['country','state','county']" ng-show="!loading">
                 <a class="item item-thumbnail-left" ng-href="#/app/trending/{{value}}/{{bestPictures[value].name}}">
                     <img ng-src="{{bestPictures[value].picture}}">
 

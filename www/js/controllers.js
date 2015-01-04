@@ -121,7 +121,7 @@ angular.module('controllers', [])
 
         }])
 
-    .controller('VoteCtrl', ['$scope', 'Location', 'Picture', 'User', function ($scope, Location, Picture, User) {
+    .controller('VoteCtrl', ['$scope', '$translate', 'Location', 'Picture', 'User', function ($scope, $translate, Location, Picture, User) {
         $scope.height = document.getElementsByTagName('ion-content')[0].clientHeight / 1.5 + 'px';
         $scope.pictures = [];
         getPictureToVote();
@@ -145,13 +145,24 @@ angular.module('controllers', [])
             $scope.pictures.shift();
         };
 
+
+        var message;
+
         function getPictureToVote() {
+            if (!message) {
+                $translate("VOTE_MESSAGE_NO_MORE_PICTURE").then(function (messageTrad) {
+                    message = messageTrad;
+                });
+            }
             if ($scope.pictures.length < 5) {
                 Location(function (location) {
                     Picture.getPicturesVote({"location": location}, function (reply) {
                         $scope.pictures = $scope.pictures.concat(reply);
+                        $scope.NoMoreVotes = $scope.pictures.length === 0 ? message : null
                     })
                 })
+            } else {
+                $scope.NoMoreVotes = $scope.pictures.length === 0 ? message : null
             }
         }
     }])
