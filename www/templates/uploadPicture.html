@@ -5,13 +5,13 @@
     <ion-content class="has-header padding scroll">
         <div class="list">
             <!--todo this is a lot of code just tu put a loader on the center ..-->
-            <div class="row row-center" ng-show="uploadind">
+            <div class="row row-center" ng-show="uploading">
                 <div class="col"></div>
                 <div class="col col-center">
                     <i class="icon ion-loading-c"></i>
                 </div>
             </div>
-            <form name="myForm" ng-show="!uploadind">
+            <form name="myForm" ng-show="!uploading">
                 <item class="item item-icon-left"><i class="icon ion-chatbubble-working"></i>
                     Comments
                     <label class="item item-input">
@@ -19,18 +19,18 @@
                     </label>
                 </item>
                 <!--<div class="item">-->
-                    <!--<div class="button-bar">-->
-                        <!--<button class="button button-block button-positive icon-left ion-ios7-camera"-->
-                                <!--ng-click="takePicture()">Camera-->
-                        <!--</button>-->
-                        <!--<button class="button button-block button-positive icon-left ion-ios7-camera"-->
-                                <!--ng-click="PickPicture()">Pick a Picture-->
-                        <!--</button>-->
-                    <!--</div>-->
+                <!--<div class="button-bar">-->
+                <!--<button class="button button-block button-positive icon-left ion-ios7-camera"-->
+                <!--ng-click="takePicture()">Camera-->
+                <!--</button>-->
+                <!--<button class="button button-block button-positive icon-left ion-ios7-camera"-->
+                <!--ng-click="PickPicture()">Pick a Picture-->
+                <!--</button>-->
+                <!--</div>-->
                 <!--</div>-->
                 <div class="padding">
                     <button class="button button-block button-positive icon-right ion-chevron-right"
-                            ng-show="canUpload" ng-click="upload()">Upload
+                            ng-show="canUpload && !uploading" ng-click="upload()">Upload
                     </button>
                 </div>
             </form>

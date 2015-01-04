@@ -10,12 +10,13 @@
     </ion-nav-buttons>
     <ion-content class="has-header">
         <!--todo this is a lot of code just tu put a loader on the center ..-->
-        <div class="row row-center" ng-show="pictures.length == 0">
+        <div class="row row-center" ng-show="pictures.length == 0 && !NoMoreVotes">
             <div class="col"></div>
             <div class="col col-center">
                 <i class="icon ion-loading-c"></i>
             </div>
         </div>
+
         <div class="list" ng-repeat="picture in pictures" ng-show="$first">
 
             <div class="item-picture">
@@ -56,7 +57,6 @@
         <a class="tab-item col-50" ng-click="vote(pictures[0]._id,false)">
             <i class="icon ion-thumbsdown"></i>
         </a>
-        |
         <a class="tab-item col-50" ng-click="vote(pictures[0]._id,true)">
             <i class="icon ion-thumbsup"></i>
         </a>

@@ -3,7 +3,7 @@
  */
 
 var url = "http://diogo-api.aws.af.cm/";
-//var url = 'http://localhost:8000/';
+var url = 'http://localhost:8000/';
 if (!window.device)window.device = {};
 if (!window.device.uuid)window.device.uuid = 123;
 

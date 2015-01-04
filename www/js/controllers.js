@@ -110,18 +110,18 @@ angular.module('controllers', [])
                     $translate(message).then(function (messageTrad) {
                         var alertPopup = $ionicPopup.alert({
                             title: messageTrad
-                        });
-                        alertPopup.then(function (res) {
-                            $scope.uploading = false;
-                            $state.go('app.trendingMenu');
-                        });
+                        })
+                            .then(function (res) {
+                                $scope.uploading = false;
+                                $state.go('app.trendingMenu');
+                            });
                     });
                 })
             }
 
         }])
 
-    .controller('VoteCtrl', ['$scope', '$translate', 'Location', 'Picture', 'User', function ($scope, $translate, Location, Picture, User) {
+    .controller('VoteCtrl', ['$scope', '$translate', '$state', '$ionicPopup', 'Location', 'Picture', 'User', function ($scope, $translate, $state, $ionicPopup, Location, Picture, User) {
         $scope.height = document.getElementsByTagName('ion-content')[0].clientHeight / 1.5 + 'px';
         $scope.pictures = [];
         getPictureToVote();
@@ -146,28 +146,35 @@ angular.module('controllers', [])
         };
 
 
-        var message;
+        function popUpNoVote() {
+            $translate("VOTE_MESSAGE_NO_MORE_PICTURE").then(function (messageTrad) {
+                $ionicPopup.alert({
+                    title: messageTrad
+                }).then(function (res) {
+                    $scope.uploading = false;
+                    $state.go('app.trendingMenu');
+                });
+            });
+        }
+
 
         function getPictureToVote() {
-            if (!message) {
-                $translate("VOTE_MESSAGE_NO_MORE_PICTURE").then(function (messageTrad) {
-                    message = messageTrad;
-                });
-            }
+
             if ($scope.pictures.length < 5) {
                 Location(function (location) {
                     Picture.getPicturesVote({"location": location}, function (reply) {
                         $scope.pictures = $scope.pictures.concat(reply);
-                        $scope.NoMoreVotes = $scope.pictures.length === 0 ? message : null
+                        if ($scope.pictures.length === 0) popUpNoVote();
                     })
                 })
             } else {
-                $scope.NoMoreVotes = $scope.pictures.length === 0 ? message : null
+                if ($scope.pictures.length === 0) popUpNoVote();
             }
         }
     }])
 
-    .controller('TrendingMenuCtrl', ['$scope', 'Location', 'Picture', function ($scope, Location, Picture) {
+    .
+    controller('TrendingMenuCtrl', ['$scope', 'Location', 'Picture', function ($scope, Location, Picture) {
         $scope.loading = true;
         $scope.bestPictures = [];
         Location(function (location) {
