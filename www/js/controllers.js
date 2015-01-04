@@ -8,9 +8,9 @@ angular.module('controllers', [])
         $ionicLoading.show();
         var value = window.localStorage.getItem("login");
         if (!value) $state.go('signin');
-       // Location(function () {
-            $ionicLoading.hide();
-            if (value)$state.go('app.trendingMenu');
+        // Location(function () {
+        $ionicLoading.hide();
+        if (value)$state.go('app.trendingMenu');
         //});
 
 
@@ -30,7 +30,7 @@ angular.module('controllers', [])
                     window.localStorage.setItem("login", true);
                     $state.go('app.trendingMenu');
                 }
-                else $scope.errorsLogIn = reply.err;
+                else $scope.errorsLogIn = reply.err;    //todo i18n for this one (see with api)
             })
 
 
@@ -55,8 +55,8 @@ angular.module('controllers', [])
     }])
 
 
-    .controller('uploadPictureCtrl', ['$scope', '$http', "$state", '$ionicPopup', 'Picture',
-        function ($scope, $http, $state, $ionicPopup, Picture) {
+    .controller('uploadPictureCtrl', ['$scope', '$http', "$state", '$ionicPopup', '$translate', 'Picture',
+        function ($scope, $http, $state, $ionicPopup, $translate, Picture) {
 
             $scope.obj = {};
             $scope.uploading = false;
@@ -106,14 +106,16 @@ angular.module('controllers', [])
                 picture.base64 = 'data:image/jpeg;base64,' + $scope.mypicture;
                 picture.location = $scope.myLocation;
                 Picture.uploadPicture({picture: picture, uuid: device.uuid}, function (reply) {
-                    var alertPopup = $ionicPopup.alert({
-                        title: 'Picture successfully uploaded'
+                    var message = reply.success ? 'UPLOAD_MESSAGE_SUCCESSFUL' : 'UPLOAD_MESSAGE_FAIL';
+                    $translate(message).then(function (messageTrad) {
+                        var alertPopup = $ionicPopup.alert({
+                            title: messageTrad
+                        });
+                        alertPopup.then(function (res) {
+                            $scope.uploading = false;
+                            $state.go('app.trendingMenu');
+                        });
                     });
-                    alertPopup.then(function (res) {
-                        $scope.uploading = false;
-                        $state.go('app.trendingMenu');
-                    });
-
                 })
             }
 
@@ -168,7 +170,7 @@ angular.module('controllers', [])
     .controller('TrendingCtrl', ['$scope', '$stateParams', '$ionicHistory', '$state', 'Picture', 'Location',
         function ($scope, $stateParams, $ionicHistory, $state, Picture, Location) {
             $scope.location = $stateParams;
-            $scope.goBack = function(){
+            $scope.goBack = function () {
                 $state.go('app.trendingMenu');
             };
             $scope.locationType = $stateParams.locationType;

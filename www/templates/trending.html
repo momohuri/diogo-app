@@ -1,4 +1,4 @@
-<ion-view title="Top in {{location.location}}">
+<ion-view title="{{'TRENDING_PAGE_TITLE' | translate}}{{location.location}}">
     <ion-nav-buttons side="left">
         <button ng-click="goBack()" class="button button-icon icon ion-ios7-arrow-back"></button>
     </ion-nav-buttons>
@@ -18,7 +18,8 @@
 
                 <h2> {{picture.name}}</h2>
 
-                <p>score : {{picture.score}}, rank: {{picture.rank}}</p>
+                <p>{{'TRENDING_SCORE' | translate}} : {{picture.score | number }}, {{'TRENDING_RANK' | translate}}:
+                    {{picture.rank}}</p>
             </a>
 
         </div>

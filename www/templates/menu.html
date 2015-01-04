@@ -8,18 +8,18 @@
 
     <ion-side-menu side="left">
         <header class="bar bar-header bar-stable">
-            <h1 class="title">Menu</h1>
+            <h1 class="title">{{'MENU_TITLE' | translate}}</h1>
         </header>
         <ion-content class="has-header">
             <ion-list>
                 <ion-item nav-clear menu-close href="#/app/trendingMenu">
-                    Trending
+                    {{ 'MENU_TRENDINGMENU' | translate}}
                 </ion-item>
                 <ion-item nav-clear menu-close href="#/app/uploadPicture">
-                    Upload Picture
+                    {{ 'MENU_PICTURE' | translate}}
                 </ion-item>
                 <ion-item nav-clear menu-close href="#/app/vote">
-                    Vote
+                    {{ 'MENU_VOTE' | translate}}
                 </ion-item>
             </ion-list>
         </ion-content>

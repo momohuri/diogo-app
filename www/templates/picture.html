@@ -1,4 +1,4 @@
-<ion-view title="Picture Details">
+<ion-view title="{{'PICTURE_PAGE_NAME' | translate}}">
     <ion-nav-buttons side="left">
         <button ng-click="goBack()" class="button button-icon icon ion-ios7-arrow-back"></button>
     </ion-nav-buttons>
@@ -44,12 +44,10 @@
     <div class="bar bar-footer">
         <a class="tab-item" ng-click="vote(pictures[0]._id,false)">
             <i class="icon ion-thumbsdown"></i>
-            Dislike
         </a>
         <span class="tab-item"><b>{{picture.score}}</b></span>
         <a class="tab-item" ng-click="vote(pictures[0]._id,true)">
             <i class="icon ion-thumbsup"></i>
-            Like
         </a>
     </div>
 </ion-view>

@@ -4,7 +4,7 @@
 // 'starter' is the name of this angular module example (also set in a <body> attribute in index.html)
 // the 2nd parameter is an array of 'requires'
 // 'starter.controllers' is found in controllers.js
-angular.module('starter', ['ionic', 'controllers', 'services', 'directives', 'Filters','pascalprecht.translate'])
+angular.module('starter', ['ionic', 'controllers', 'services', 'directives', 'Filters', 'pascalprecht.translate'])
 
     .run(function ($ionicPlatform) {
         $ionicPlatform.ready(function () {
@@ -112,4 +112,42 @@ angular.module('starter', ['ionic', 'controllers', 'services', 'directives', 'Fi
                 }
             }
         })
-    });
+    })
+
+    .config(['$translateProvider', function ($translateProvider) {
+
+        //todo load that in a external json
+        $translateProvider.translations('en', {
+            'MENU_TITLE': 'Menu',
+            'MENU_TRENDINGMENU': 'Trending',
+            'MENU_PICTURE': 'Upload Picture',
+            'MENU_VOTE': 'Vote',
+
+            'TRENDING_MENU_PAGE_NAME': 'Trending',
+            'country': "Country",
+            'state': 'State',
+            'county': 'County',
+
+            'SIGNIN_PAGE_NAME': 'Sign Up',
+            'SIGNIN_BUTTON_SIGNIN': 'Sign Up',
+            'SIGNIN_BUTTON_TO_LOGIN': 'Login',
+            'LOGIN_PAGE_NAME': 'Login',
+            'LOGIN_PLACEHOLDER_USERNAME': 'Username',
+            'LOGIN_PLACEHOLDER_PASSWORD': 'Password',
+            'LOGIN_BUTTON_LOGIN': 'Login',
+            'LOGIN_BUTTON_TO_SIGNUP': 'Sign Up',
+            'LOGIN_PLACEHOLDER_VERIFY_PASSWORD': 'Verify Password',
+
+            'PICTURE_PAGE_NAME': 'Picture Details',
+
+            'TRENDING_PAGE_TITLE':'Top in ',
+            'TRENDING_RANK': 'Rank',
+            'TRENDING_SCORE': 'Score',
+
+            'UPLOAD_MESSAGE_SUCCESSFUL':'',
+            'UPLOAD_MESSAGE_FAIL':''
+
+        });
+
+        $translateProvider.preferredLanguage('en');
+    }]);

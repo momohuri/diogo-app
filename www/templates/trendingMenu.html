@@ -1,4 +1,4 @@
-<ion-view title="Trending">
+<ion-view title="{{'TRENDING_MENU_PAGE_NAME' | translate}}">
     <ion-nav-buttons side="left">
         <button menu-toggle="left" class="button button-icon icon ion-navicon"></button>
     </ion-nav-buttons>
@@ -12,11 +12,15 @@
                 </div>
             </div>
 
-            <div class="list" ng-repeat="(key,value) in ['country','state','county']">
+            <div class="list" ng-repeat="(key,value) in ['country','state','county']" nh-show="!loading">
+
+                {{lol}}
                 <a class="item item-thumbnail-left" ng-href="#/app/trending/{{value}}/{{bestPictures[value].name}}">
                     <img ng-src="{{bestPictures[value].picture}}">
+
                     <h2> {{bestPictures[value].name}}</h2>
-                    <p>{{value}}</p>
+
+                    <p>{{value | translate}}</p>
                 </a>
             </div>
         </div>

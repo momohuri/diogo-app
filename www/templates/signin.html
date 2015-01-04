@@ -1,7 +1,7 @@
-<ion-view title="Sign Up">
+<ion-view title="{{'SIGNIN_PAGE_NAME' | translate}}">
 
     <div class="bar bar-header bar-stable">
-        <h1 class="title">Sign Up</h1>
+        <h1 class="title">{{'SIGNIN_PAGE_NAME' | translate}}</h1>
     </div>
 
 
@@ -11,26 +11,31 @@
             <form ng-submit="doSignIn()">
                 <div class="list">
                     <label class="item item-input">
-                        <input type="text" ng-model="signIn.username" placeholder="Username">
+                        <input type="text" ng-model="signIn.username"
+                               placeholder="{{'LOGIN_PLACEHOLDER_USERNAME' | translate}}">
                     </label>
                     <label class="item item-input">
-                        <input type="password" ng-model="signIn.password" placeholder="Password">
+                        <input type="password" ng-model="signIn.password"
+                               placeholder="{{'LOGIN_PLACEHOLDER_PASSWORD' | translate}}">
                     </label>
                     <label class="item item-input">
-                        <input type="password" ng-model="signIn.passwordVerify" placeholder="Verify Password">
+                        <input type="password" ng-model="signIn.passwordVerify"
+                               placeholder="{{'LOGIN_PLACEHOLDER_VERIFY_PASSWORD' | translate}}">
 
                     </label>
 
-                    <div class="ion-alert-circled" ng-show="errorsSignIn">{{errorsSignIn}}</div>
+                    <div class="ion-alert-circled" ng-show="errorsSignIn">{{errorsSignIn | translate}}</div>
 
                     <label class="item">
-                        <button class="button button-block button-positive" type="submit">Sign Up</button>
+                        <button class="button button-block button-positive" type="submit">{{ 'SIGNIN_BUTTON_SIGNIN' |
+                            translate }}
+                        </button>
                     </label>
                 </div>
             </form>
             <a ng-href="#/login">
                 <button class="button button-full button-stable button-borders">
-                    Log In
+                    {{'SIGNIN_BUTTON_TO_LOGIN' | translate}}
                 </button>
             </a>
 
