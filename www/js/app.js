@@ -157,7 +157,7 @@ angular.module('starter', ['ionic', 'controllers', 'services', 'directives', 'Fi
 
             'VOTE_MESSAGE_NO_MORE_PICTURE':'No more nearby posts. Thanks for voting!',
 
-            'SETTINGS_PAGE_TITLE':''
+            'SETTINGS_PAGE_TITLE':'Settings, brah!'
 
 
         });
