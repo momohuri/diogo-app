@@ -1,17 +1,18 @@
 angular.module('controllers', [])
 
-    .controller('AppCtrl', ["Location", function (Location) {
-
+    .controller('AppCtrl', ["User", function (User) {
+        User.getPoints(function (points) {
+        });
     }])
 
     .controller('AppLoading', ['$state', "Location", "$ionicLoading", function ($state, Location, $ionicLoading) {
         $ionicLoading.show();
         var value = window.localStorage.getItem("login");
         if (!value) $state.go('signin');
-        // Location(function () {
-        $ionicLoading.hide();
-        if (value)$state.go('app.trendingMenu');
-        //});
+        Location(function () {
+            $ionicLoading.hide();
+            if (value)$state.go('app.trendingMenu');
+        });
 
 
     }])
@@ -21,7 +22,6 @@ angular.module('controllers', [])
         // Form data for the login modal
         $scope.logIn = {};
         $scope.signIn = {};
-
         // Perform the login action when the user submits the login form
         $scope.doLogin = function () {
             $scope.logIn.uuid = device.uuid;
@@ -57,25 +57,23 @@ angular.module('controllers', [])
 
     .controller('uploadPictureCtrl', ['$scope', '$http', "$state", '$ionicPopup', '$translate', 'Picture',
         function ($scope, $http, $state, $ionicPopup, $translate, Picture) {
+            $state.get('app.uploadPicture').onEnter = function () {
+                takePicture();
+            };
+            takePicture();
 
             $scope.obj = {};
             $scope.uploading = false;
             var pictureSource;
-            //todo keep code for gallery, maybe one day
+//            keep code for gallery, maybe one day
 //            $scope.PickPicture = function () {
 //                pictureSource = navigator.camera.PictureSourceType.PHOTOLIBRARY;
 //                processPicture()
 //            };
-
-
-            $scope.takePicture = function () {
+            function takePicture() {
                 pictureSource = navigator.camera.PictureSourceType.CAMERA;
                 processPicture()
             };
-            $state.get('app.uploadPicture').onEnter = function () {
-                $scope.takePicture();
-            };
-            $scope.takePicture();
 
             function processPicture() {
                 $scope.canUpload = true;
@@ -84,7 +82,10 @@ angular.module('controllers', [])
                     destinationType: Camera.DestinationType.DATA_URL,
                     sourceType: pictureSource,
                     encodingType: Camera.EncodingType.JPEG,
-                    targetWidth: 640
+                    allowEdit: false,
+                    targetWidth: 600,
+                    targetHeight: 600,
+                    correctOrientation: true
                 };
                 navigator.camera.getPicture(
                     function (image64) {
@@ -112,6 +113,7 @@ angular.module('controllers', [])
                             title: messageTrad
                         })
                             .then(function (res) {
+                                $scope.obj.name = '';
                                 $scope.uploading = false;
                                 $state.go('app.trendingMenu');
                             });
@@ -121,68 +123,75 @@ angular.module('controllers', [])
 
         }])
 
-    .controller('VoteCtrl', ['$scope', '$translate', '$state', '$ionicPopup', 'Location', 'Picture', 'User', function ($scope, $translate, $state, $ionicPopup, Location, Picture, User) {
-        $scope.height = document.getElementsByTagName('ion-content')[0].clientHeight / 1.5 + 'px';
-        $scope.pictures = [];
-        getPictureToVote();
-
-        $scope.user = {};
-
-        User.getPoints(function (points) {
-            $scope.user.points = points;
-        });
-
-        $scope.vote = function (id, value) {
-            ++$scope.user.points;
-            Location(function (location) {
-                Picture.vote({
-                    vote: {"pictureId": id, location: location, voteType: value},
-                    "uuid": window.device.uuid
-                }, function () {
-                    getPictureToVote();
-                });
-            });
-            $scope.pictures.shift();
-        };
+    .controller('VoteCtrl', ['$scope', '$translate', '$state', '$ionicPopup', '$rootScope', 'Location', 'Picture', 'User',
+        function ($scope, $translate, $state, $ionicPopup, $rootScope, Location, Picture, User) {
+            $scope.height = document.getElementsByTagName('ion-content')[0].clientHeight / 1.5 + 'px';
+            $scope.pictures = [];
 
 
-        function popUpNoVote() {
-            $translate("VOTE_MESSAGE_NO_MORE_PICTURE").then(function (messageTrad) {
-                $ionicPopup.alert({
-                    title: messageTrad
-                }).then(function (res) {
-                    $scope.uploading = false;
-                    $state.go('app.trendingMenu');
-                });
-            });
-        }
+            $state.get('app.vote').onEnter = function () {
+                getPictureToVote();
+            };
+            getPictureToVote();
 
-
-        function getPictureToVote() {
-
-            if ($scope.pictures.length < 5) {
+            $scope.vote = function (id, value) {
+                ++$rootScope.user.points;
                 Location(function (location) {
-                    Picture.getPicturesVote({"location": location}, function (reply) {
-                        $scope.pictures = $scope.pictures.concat(reply);
-                        if ($scope.pictures.length === 0) popUpNoVote();
-                    })
-                })
-            } else {
-                if ($scope.pictures.length === 0) popUpNoVote();
+                    Picture.vote({
+                        vote: {
+                            "pictureId": id,
+                            location: location,
+                            voteType: value,
+                            pictureLocation: $scope.pictures[0].location
+                        },
+                        "uuid": window.device.uuid
+                    }, function () {
+                        getPictureToVote();
+                    });
+                    $scope.pictures.shift();
+                });
+            };
+            function popUpNoVote() {
+                $translate("VOTE_MESSAGE_NO_MORE_PICTURE").then(function (messageTrad) {
+                    $ionicPopup.alert({
+                        title: messageTrad
+                    }).then(function (res) {
+                        $scope.uploading = false;
+                        $state.go('app.trendingMenu');
+                    });
+                });
             }
-        }
-    }])
 
-    .
-    controller('TrendingMenuCtrl', ['$scope', 'Location', 'Picture', function ($scope, Location, Picture) {
+            function getPictureToVote() {
+                if ($scope.pictures.length < 5) {
+                    Location(function (location) {
+                        Picture.getPicturesVote({"location": location}, function (reply) {
+                            $scope.pictures = $scope.pictures.concat(reply);
+                            if ($scope.pictures.length === 0) popUpNoVote();
+                        })
+                    })
+                } else {
+                    if ($scope.pictures.length === 0) popUpNoVote();
+                }
+            }
+        }])
+
+    .controller('TrendingMenuCtrl', ['$scope', '$state', 'Location', 'Picture', function ($scope, $state, Location, Picture) {
         $scope.loading = true;
         $scope.bestPictures = [];
-        Location(function (location) {
-            $scope.location = location;
-            $scope.bestPictures = Picture.getTopOnePicture({location: location}, function () {
-                $scope.loading = false;
+
+        $state.get('app.trendingMenu').onEnter = function () {
+            getTopPicture();
+        };
+        getTopPicture();
+        function getTopPicture() {
+            Location(function (location) {
+                $scope.location = location;
+                $scope.bestPictures = Picture.getTopOnePicture({location: location}, function () {
+                    $scope.loading = false;
+                });
             });
-        });
+        }
     }])
 
     .controller('TrendingCtrl', ['$scope', '$stateParams', '$ionicHistory', '$state', 'Picture', 'Location',
@@ -192,44 +201,75 @@ angular.module('controllers', [])
                 $state.go('app.trendingMenu');
             };
             $scope.locationType = $stateParams.locationType;
-            Location(function (location) {
-                Picture.getTrendingPicture({type: $stateParams.locationType, location: location}, function (docs) {
-                    $scope.pictures = docs.pictures;
-                })
-            });
+
+            $state.get('app.trending').onEnter = function () {
+                getTrendingPicture();
+            };
+            getTrendingPicture();
+            function getTrendingPicture() {
+                Location(function (location) {
+                    Picture.getTrendingPicture({type: $stateParams.locationType, location: location}, function (docs) {
+                        $scope.pictures = docs.pictures;
+                    })
+                });
+            }
+
         }])
 
-    .controller('PictureCtrl', ['$scope', '$stateParams', '$ionicHistory', 'Picture', 'User', function ($scope, $stateParams, $ionicHistory, Picture, User) {
-        $scope.height = document.getElementsByTagName('ion-content')[0].clientHeight / 1.5 + 'px';
-        $scope.goBack = $ionicHistory.goBack;
-        var pictureNo = parseInt($stateParams.pictureNo);
-        $scope.picture = Picture.getPicture(pictureNo);
-        $scope.user = {};
-        User.getPoints(function (points) {
-            $scope.user.points = points;
-        });
+    .controller('PictureCtrl', ['$scope', '$stateParams', '$ionicHistory', '$rootScope', 'Picture', 'Location',
+        function ($scope, $stateParams, $ionicHistory, $rootScope, Picture, Location) {
+            $scope.height = document.getElementsByTagName('ion-content')[0].clientHeight / 1.5 + 'px';
+            $scope.goBack = $ionicHistory.goBack;
+            var pictureNo = parseInt($stateParams.pictureNo);
+            $scope.picture = Picture.getPicture(pictureNo);
+            var canDo = true;
+            $scope.right = function () {
+                if (canDo) {
+                    if (Picture.pictureExist(pictureNo - 1)) {
+                        $scope.picture = Picture.getPicture(--pictureNo);
+                        canDo = false;
+                        setTimeout(function () {
+                            canDo = true
+                        }, 500)
+                    }
+                }
+            };
+            $scope.left = function () {
+                if (canDo) {
+                    if (Picture.pictureExist(pictureNo + 1)) {
+                        $scope.picture = Picture.getPicture(++pictureNo);
+                        canDo = false;
+                        setTimeout(function () {
+                            canDo = true
+                        }, 500)
+                    }
+                }
+            };
+            $scope.vote = function (id, value) {
+                if ($scope.picture.voted === value) return;//if vote again the same;
+                if ($scope.picture.voted !== false && $scope.picture.voted !== true) {
+                    ++$rootScope.user.points;
+                    $scope.picture.score += value ? 2 : -2;
+                } else {
+                    $scope.picture.score += value ? 4 : -4;
+                }
+                $scope.picture.voted = value;
+                Location(function (location) {
+                    Picture.vote({
+                        vote: {
+                            "pictureId": id,
+                            location: location,
+                            voteType: value,
+                            pictureLocation: $scope.picture.location
+                        },
+                        "uuid": window.device.uuid
+                    }, function () {
+                    });
+                });
+            };
 
-        var canDo = true;
-        $scope.right = function () {
-            if (canDo) {
-                if (Picture.pictureExist(pictureNo - 1)) {
-                    $scope.picture = Picture.getPicture(--pictureNo);
-                    canDo = false;
-                    setTimeout(function () {
-                        canDo = true
-                    }, 500)
-                }
-            }
-        };
-        $scope.left = function () {
-            if (canDo) {
-                if (Picture.pictureExist(pictureNo + 1)) {
-                    $scope.picture = Picture.getPicture(++pictureNo);
-                    canDo = false;
-                    setTimeout(function () {
-                        canDo = true
-                    }, 500)
-                }
-            }
-        }
-    }]);
+        }])
+
+    .controller('SettingsCtrl',['$scope',function($scope){
+        debugger
+    }])

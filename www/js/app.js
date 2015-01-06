@@ -94,6 +94,14 @@ angular.module('starter', ['ionic', 'controllers', 'services', 'directives', 'Fi
                         controller: 'PictureCtrl'
                     }
                 }
+            }).state('app.settings',{
+                url: "/settings",
+                views:{
+                    'menuContent':{
+                        templateUrl:'templates/settings.html',
+                        controller:'SettingsCtrl'
+                    }
+                }
             });
         // if none of the above states are matched, use this as the fallback
         $urlRouterProvider.otherwise('/loading');
@@ -147,7 +155,9 @@ angular.module('starter', ['ionic', 'controllers', 'services', 'directives', 'Fi
             'UPLOAD_MESSAGE_SUCCESSFUL': 'Awesome! Upload Successful.',
             'UPLOAD_MESSAGE_FAIL': 'Shoot, that didn\'t work. Please try again later.',
 
-            'VOTE_MESSAGE_NO_MORE_PICTURE':'No more nearby posts. Thanks for voting!'
+            'VOTE_MESSAGE_NO_MORE_PICTURE':'No more nearby posts. Thanks for voting!',
+
+            'SETTINGS_PAGE_TITLE':''
 
 
         });

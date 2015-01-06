@@ -11,5 +11,27 @@
 
 .full_screen_img {
     max-height: 50vh;
-    width:auto;
+    width: auto;
+}
+
+.red {
+    color: red;
+}
+
+.green {
+    color: green;
+}
+
+.rank-icon{
+    height:50px;
+    position: absolute;
+    margin-left: -116px;
+    margin-top:-15px;
+    z-index: 1;
+}
+
+.picture-description{
+    border-top: 1px solid #ddd;
+    border-bottom : 1px solid #ddd;
+    margin-left: 5px;
 }

@@ -13,26 +13,27 @@
 
         <div class="item-picture" on-drag-right="right()" on-drag-left="left()">
             <div class="row row-center">
-                <img class="full_screen_img" ng-src="{{picture.url}}" ng-style="{'max-height':height,'width':'auto', min-height:50px}">
+                <img class="full_screen_img" ng-src="{{picture.url}}"
+                     ng-style="{'max-height':height,'width':'auto','min-height':'300px'}">
             </div>
-
             <div class="row">
-                <div class="col .col-50 col-offset-40">
+                <div class="col col-50 col-offset-40">
                     <i class="icon ion-location"></i>
                     {{ picture.location.county}}
                 </div>
             </div>
 
             <div class="row">
-                <div class="col col-33">{{picture.userId.username | capitalize}}</div>
+                <div class="col col-33"><i class="icon ion-person"></i> {{picture.userId.username | capitalize}}
+                </div>
                 <div class="col col-33 col-offset-33">
-                    <small>{{picture.date | timeago}}</small>
+                    <i class="icon ion-clock"></i>
+                    <small> {{picture.date | timeago}}</small>
                 </div>
             </div>
 
-
-            <div class="item">
-                <h2>{{picture.name}}</h2>
+            <div class="row responsive-sm">
+                <div class="picture-description"><p>{{picture.name}}</p></div>
             </div>
 
 
@@ -40,12 +41,12 @@
     </ion-content>
 
     <div class="bar bar-footer">
-        <a class="tab-item col-49" ng-click="vote(pictures[0]._id,false)">
-            <i class="icon ion-thumbsdown"></i>
+        <a class="tab-item col-49" ng-click="vote(picture._id,false)">
+            <i class="icon ion-thumbsdown" ng-class="picture.voted===false?'red':''"></i>
         </a>
         <span class="tab-item"><b>{{picture.score}}</b></span>
-        <a class="tab-item  col-49" ng-click="vote(pictures[0]._id,true)">
-            <i class="icon ion-thumbsup"></i>
+        <a class="tab-item  col-49" ng-click="vote(picture._id,true)">
+            <i class="icon ion-thumbsup" ng-class="picture.voted===true?'green':''"></i>
         </a>
     </div>
 </ion-view>
