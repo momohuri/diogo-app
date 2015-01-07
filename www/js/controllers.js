@@ -1,7 +1,7 @@
 angular.module('controllers', [])
 
     .controller('AppCtrl', ["User", function (User) {
-        User.getPoints(function (points) {
+        User.getUserInfo(function (points) {
         });
     }])
 
@@ -53,7 +53,6 @@ angular.module('controllers', [])
 
         }
     }])
-
 
     .controller('uploadPictureCtrl', ['$scope', '$http', "$state", '$ionicPopup', '$translate', 'Picture',
         function ($scope, $http, $state, $ionicPopup, $translate, Picture) {
@@ -270,6 +269,43 @@ angular.module('controllers', [])
 
         }])
 
-    .controller('SettingsCtrl',['$scope',function($scope){
-        debugger
-    }])
+    .controller('SettingsCtrl', ['$scope', '$ionicHistory', '$ionicPopup', '$translate', '$state', 'User',
+        function ($scope, $ionicHistory, $ionicPopup, $translate, $state, User) {
+            $scope.goBack = $ionicHistory.goBack;
+            $scope.SignOut = function () {
+                $translate('SETTINGS_POPUP_SIGNOUT_CONFIRM').then(function (messageTrad) {
+                    $ionicPopup.confirm({
+                        title: messageTrad
+                    }).then(function (res) {
+                        if (res) {
+                            User.signOut();
+                            window.localStorage.setItem("login", false);
+                            $state.go('login');
+                        }
+                    });
+                });
+            }
+        }])
+    .controller('AddSchoolCtrl', ['$scope', '$http', '$state', 'User', function ($scope, $http, $state, User) {
+        $scope.data = {"schools": [], "search": ''};
+        var universities;
+        $http.get('ressources/universities.json').
+            success(function (data, status, headers, config) {
+                universities = data;
+            }).
+            error(function (data, status, headers, config) {
+                console.log('couldn\'t get universities.json...');
+            });
+        $scope.search = function () {
+            if ($scope.data.search.length < 3) return;
+            $scope.data.schools = universities.filter(function (university) {
+                if (university.toLowerCase().indexOf($scope.data.search.toLowerCase()) !== -1) return true;
+            })
+        };
+        $scope.schoolSelected = function (school) {
+            User.schoolSelected({school: school}, function (reply) {
+                $state.go('app.settings');
+            })
+        }
+
+    }]);

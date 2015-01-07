@@ -35,3 +35,7 @@
     border-bottom : 1px solid #ddd;
     margin-left: 5px;
 }
+
+.right{
+    float:right;
+}

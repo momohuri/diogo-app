@@ -94,12 +94,21 @@ angular.module('starter', ['ionic', 'controllers', 'services', 'directives', 'Fi
                         controller: 'PictureCtrl'
                     }
                 }
-            }).state('app.settings',{
+            }).state('app.settings', {
                 url: "/settings",
-                views:{
-                    'menuContent':{
-                        templateUrl:'templates/settings.html',
-                        controller:'SettingsCtrl'
+                views: {
+                    'menuContent': {
+                        templateUrl: 'templates/settings.html',
+                        controller: 'SettingsCtrl'
+                    }
+                }
+            }).
+            state('app.addSchool', {
+                url: '/addSchool',
+                views: {
+                    'menuContent': {
+                        templateUrl: 'templates/addSchool.html',
+                        controller: 'AddSchoolCtrl'
                     }
                 }
             });
@@ -155,9 +164,20 @@ angular.module('starter', ['ionic', 'controllers', 'services', 'directives', 'Fi
             'UPLOAD_MESSAGE_SUCCESSFUL': 'Awesome! Upload Successful.',
             'UPLOAD_MESSAGE_FAIL': 'Shoot, that didn\'t work. Please try again later.',
 
-            'VOTE_MESSAGE_NO_MORE_PICTURE':'No more nearby posts. Thanks for voting!',
+            'VOTE_MESSAGE_NO_MORE_PICTURE': 'No more nearby posts. Thanks for voting!',
 
-            'SETTINGS_PAGE_TITLE':'Settings, brah!'
+            'SETTINGS_PAGE_TITLE': 'Settings, brah!',
+            'SETTINGS_NO_SCHOOL': 'No school selected',
+            'SETTINGS_ADD_SCHOOL': 'Add',
+            'SETTINGS_CHANGE_SCHOOL': 'Change',
+            'SETTINGS_SIGN_OUT': 'Sign Out',
+            'SETTINGS_POPUP_SIGNOUT_CONFIRM': 'Are you sure you want to sign out?',
+            'SETTINGS_MY_ACCOUNT': 'My Account',
+            'SETTING_USERNAME_LABEL': 'User Name :',
+            'SETTING_SCHOOL_LABEL': 'School :',
+
+
+            'ADD_SCHOOL_PAGE_TITLE': 'Pick your school'
 
 
         });

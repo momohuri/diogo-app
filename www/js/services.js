@@ -42,21 +42,29 @@ angular.module('services', ['ngResource'])
         var User = $resource('User', {uuid: window.device.uuid}, {
             signIn: {method: "POST", "url": url + "signIn"},
             logIn: {method: "POST", "url": url + "logIn"},
-            isLogged: {method: "POST", "url": url + "isLogged"}
+            isLogged: {method: "POST", "url": url + "isLogged"},
+            signOut: {method: 'POST', 'url': url + 'signOut'}
         });
-        if (!$rootScope.user)$rootScope.user = {};
-        User.getPoints = function (next) {
-            if ($rootScope.user.points) return next($rootScope.user.points);
+        User.getUserInfo = function (next) {
+            if ($rootScope.user) return next($rootScope.user);
             else {
-                $http.get(url + 'getUserPoints?uuid=' + window.device.uuid).success(function (userPoints) {
-                    $rootScope.user.points = userPoints;
-                    next($rootScope.user.points);
+                $http.get(url + 'getUserInfo?uuid=' + window.device.uuid).success(function (user) {
+                    $rootScope.user = user;
+                    next($rootScope.user);
                 })
             }
         };
+        User.schoolSelected = function (school, next) {
+            $http.post(url + 'schoolSelected?uuid=' + window.device.uuid, school).success(function (res) {
+                if (res.success) {
+                    $rootScope.user.school = school;
+                    next(res);
+                } else next(res);
+            })
+        };
         return User;
     }])
-    .factory('Location', ['$http', '$rootScope','$ionicPlatform', function ($http, $rootScope,$ionicPlatform) {
+    .factory('Location', ['$http', '$rootScope', '$ionicPlatform', function ($http, $rootScope, $ionicPlatform) {
         //todo refactor with no rootscope
         //todo every 5 mins renew location
         $rootScope.findingLocation = false;

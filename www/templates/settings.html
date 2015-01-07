@@ -3,28 +3,47 @@
         <button ng-click="goBack()" class="button button-icon icon ion-ios7-arrow-back"></button>
     </ion-nav-buttons>
     <ion-content class="has-header padding scroll">
-        <div class="list">
-            <!--todo this is a lot of code just tu put a loader on the center ..-->
-            <div class="row row-center" ng-show="loading">
-                <div class="col"></div>
-                <div class="col col-center">
-                    <i class="icon ion-loading-c"></i>
+        <div>
+            <div class="row">
+                <div class="col"><h4>{{ 'SETTINGS_MY_ACCOUNT' | translate}}</h4>
                 </div>
             </div>
-        </div>
-        <div ng-repeat="(index,picture) in pictures">
-            <a class="item item-thumbnail-left" ng-href="#/app/picture/{{locationType}}/{{index}}">
-                <img ng-src="{{picture.url}}">
-                <img src="img/first_place.png" class="rank-icon" ng-show="$first">
-                <img src="img/second_place.png" class="rank-icon" ng-show="$index==1">
-                <img src="img/third_place.png" class="rank-icon" ng-show="$index==2">
-                <br>
+            <div class="list">
+                <label class="item item-input item-stacked-label">
+                    <span class="input-label"><b>{{'SETTING_USERNAME_LABEL' | translate}}</b></span><br>
+                    <span class="input-label"><i class="icon ion-person"></i> {{user.username | capitalize}}</span>
+                </label>
+                <label class="item item-input item-stacked-label">
+                    <span class="input-label"><b>{{'SETTING_SCHOOL_LABEL' | translate}}</b></span>
+                    <span ng-show="!user.school">
+                    <a href="#/app/addSchool">
+                        <button class="button button-royal right" style="margin-top: -23px">{{'SETTINGS_ADD_SCHOOL' |
+                            translate}}
+                        </button>
+                    </a> <br>
+                    <span class="input-label"> {{'SETTINGS_NO_SCHOOL' | translate}}</span>
+                        </span>
+                    <span ng-show="user.school">
+                    <a href="#/app/addSchool">
+                        <button class="button button-royal right" style="margin-top: -23px">{{'SETTINGS_CHANGE_SCHOOL' |
+                            translate}}
+                        </button>
+                    </a> <br>
+                    <span class="input-label"> {{ user.school}}</span>
+                        </span>
+                </label>
+            </div>
 
-                <h3><i class="icon ion-person"></i> {{picture.userId.username | capitalize}} </h3>
+            <div class="row">
+                <div class="col"></div>
+                <div class="col col-center col-80">
+                    <button class="button button-assertive button-full button-borders" ng-click="SignOut()">
+                        {{'SETTINGS_SIGN_OUT' | translate}}
+                    </button>
+                </div>
+                <div class="col"></div>
+            </div>
 
-                <h2> {{picture.name}}</h2>
-
-            </a>
 
         </div>
     </ion-content>
