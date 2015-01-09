@@ -4,7 +4,8 @@
     </ion-nav-buttons>
 
     <ion-nav-buttons side="right">
-        <p> {{ user.points | number}} pts <a href="#/app/settings"><i class="button button-icon icon ion-ios7-gear"></i></a></p>
+        <p> {{ user.points | number}} pts <a href="#/app/settings"><i class="button button-icon icon ion-ios7-gear"></i></a>
+        </p>
     </ion-nav-buttons>
 
 
@@ -19,12 +20,25 @@
             </div>
 
             <div class="list" ng-repeat="(key,value) in ['country','state','county']" ng-show="!loading">
-                <a class="item item-thumbnail-left" ng-href="#/app/trending/{{value}}/{{bestPictures[value].name}}">
-                    <img ng-src="{{bestPictures[value].picture}}">
+                <a class="item item-thumbnail-left" ng-href="#/app/trending/{{value}}/{{bestPictures[value].name}}"
+                   ng-click="noPicture($event,bestPictures[value].picture)">
+                    <img ng-src="{{bestPictures[value].picture}}" ng-show="bestPictures[value].picture">
+                    <img class="thumbnail" src="/img/no_post.jpg" ng-show="!bestPictures[value].picture"
+                         ng-click="noPicture($event)">
 
                     <h2> {{bestPictures[value].name}}</h2>
 
                     <p>{{value | translate}}</p>
+                </a>
+            </div>
+            <div class="list" ng-show="!loading && user.institution">
+                <a class="item item-thumbnail-left" ng-href="#/app/trending/institution/{{user.institution}}">
+                    <img ng-src="{{bestPictures.institution.picture}}" ng-show="bestPictures.institution.picture">
+                    <img class="thumbnail" src="/img/no_post.jpg" ng-show="!bestPictures.institution.picture">
+
+                    <h2> {{user.institution}}</h2>
+
+                    <p>{{'TRENDING_MENU_LABEL_SCHOOL' | translate}}</p>
                 </a>
             </div>
         </div>

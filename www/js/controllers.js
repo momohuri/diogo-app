@@ -1,7 +1,20 @@
+'use strict';
 angular.module('controllers', [])
 
-    .controller('AppCtrl', ["User", function (User) {
+    .controller('AppCtrl', ["User", '$ionicPlatform', function (User, $ionicPlatform) {
         User.getUserInfo(function (points) {
+        });
+
+
+        $ionicPlatform.ready(function () {
+            if (typeof analytics !== 'undefined') {
+                analytics.startTrackerWithId('UA-58343549-1');
+                analytics.trackView('app');
+                console.log("starting analytics");
+            }
+            else {
+                console.log("Google Analytics plugin could not be loaded.")
+            }
         });
     }])
 
@@ -56,9 +69,7 @@ angular.module('controllers', [])
 
     .controller('uploadPictureCtrl', ['$scope', '$http', "$state", '$ionicPopup', '$translate', 'Picture',
         function ($scope, $http, $state, $ionicPopup, $translate, Picture) {
-            $state.get('app.uploadPicture').onEnter = function () {
-                takePicture();
-            };
+            $state.get('app.uploadPicture').onEnter = takePicture;
             takePicture();
 
             $scope.obj = {};
@@ -72,7 +83,7 @@ angular.module('controllers', [])
             function takePicture() {
                 pictureSource = navigator.camera.PictureSourceType.CAMERA;
                 processPicture()
-            };
+            }
 
             function processPicture() {
                 $scope.canUpload = true;
@@ -100,26 +111,27 @@ angular.module('controllers', [])
             }
 
             $scope.upload = function () {
-                $scope.uploading = true;
-                var picture = {};
-                picture.name = $scope.obj.name;
-                picture.base64 = 'data:image/jpeg;base64,' + $scope.mypicture;
-                picture.location = $scope.myLocation;
-                Picture.uploadPicture({picture: picture, uuid: device.uuid}, function (reply) {
-                    var message = reply.success ? 'UPLOAD_MESSAGE_SUCCESSFUL' : 'UPLOAD_MESSAGE_FAIL';
-                    $translate(message).then(function (messageTrad) {
-                        var alertPopup = $ionicPopup.alert({
-                            title: messageTrad
-                        })
-                            .then(function (res) {
-                                $scope.obj.name = '';
-                                $scope.uploading = false;
-                                $state.go('app.trendingMenu');
-                            });
-                    });
-                })
+                Location(function (location) {
+                    $scope.uploading = true;
+                    var picture = {};
+                    picture.name = $scope.obj.name;
+                    picture.base64 = 'data:image/jpeg;base64,' + $scope.mypicture;
+                    picture.location = location;
+                    Picture.uploadPicture({picture: picture, uuid: device.uuid}, function (reply) {
+                        var message = reply.success ? 'UPLOAD_MESSAGE_SUCCESSFUL' : 'UPLOAD_MESSAGE_FAIL';
+                        $translate(message).then(function (messageTrad) {
+                            $ionicPopup.alert({
+                                title: messageTrad
+                            })
+                                .then(function (res) {
+                                    $scope.obj.name = '';
+                                    $scope.uploading = false;
+                                    $state.go('app.trendingMenu');
+                                });
+                        });
+                    })
+                });
             }
-
         }])
 
     .controller('VoteCtrl', ['$scope', '$translate', '$state', '$ionicPopup', '$rootScope', 'Location', 'Picture', 'User',
@@ -141,7 +153,8 @@ angular.module('controllers', [])
                             "pictureId": id,
                             location: location,
                             voteType: value,
-                            pictureLocation: $scope.pictures[0].location
+                            pictureLocation: $scope.pictures[0].location,
+                            pictureInstitution: $scope.pictures[0].institution
                         },
                         "uuid": window.device.uuid
                     }, function () {
@@ -175,23 +188,38 @@ angular.module('controllers', [])
             }
         }])
 
-    .controller('TrendingMenuCtrl', ['$scope', '$state', 'Location', 'Picture', function ($scope, $state, Location, Picture) {
-        $scope.loading = true;
-        $scope.bestPictures = [];
+    .controller('TrendingMenuCtrl', ['$scope', '$state', '$ionicPopup', '$translate', 'Location', 'Picture',
+        function ($scope, $state, $ionicPopup, $translate, Location, Picture) {
+            if (typeof analytics !== "undefined") {
+                analytics.trackView("Awesome Controller");
+            }
+            $scope.loading = true;
 
-        $state.get('app.trendingMenu').onEnter = function () {
+            $state.get('app.trendingMenu').onEnter = function () {
+                getTopPicture();
+            };
             getTopPicture();
-        };
-        getTopPicture();
-        function getTopPicture() {
-            Location(function (location) {
-                $scope.location = location;
-                $scope.bestPictures = Picture.getTopOnePicture({location: location}, function () {
-                    $scope.loading = false;
+            function getTopPicture() {
+                Location(function (location) {
+                    $scope.location = location;
+                    Picture.getTopOnePicture({location: location}, function (data) {
+                        $scope.bestPictures = data;
+                        $scope.loading = false;
+                    });
                 });
-            });
-        }
-    }])
+            }
+
+            $scope.noPicture = function ($event, isPicture) {
+                if (isPicture)  return;
+                $event.preventDefault();
+                $translate('TRENDING_MENU_NO_PICTURE').then(function (messageTrad) {
+                    $ionicPopup.alert({
+                        title: messageTrad
+                    });
+                });
+            }
+
+        }])
 
     .controller('TrendingCtrl', ['$scope', '$stateParams', '$ionicHistory', '$state', 'Picture', 'Location',
         function ($scope, $stateParams, $ionicHistory, $state, Picture, Location) {
@@ -245,21 +273,22 @@ angular.module('controllers', [])
                 }
             };
             $scope.vote = function (id, value) {
-                if ($scope.picture.voted === value) return;//if vote again the same;
-                if ($scope.picture.voted !== false && $scope.picture.voted !== true) {
+                if ($scope.picture.vote === value) return;//if vote again the same;
+                if ($scope.picture.vote !== false && $scope.picture.vote !== true) {
                     ++$rootScope.user.points;
                     $scope.picture.score += value ? 2 : -2;
                 } else {
                     $scope.picture.score += value ? 4 : -4;
                 }
-                $scope.picture.voted = value;
+                $scope.picture.vote = value;
                 Location(function (location) {
                     Picture.vote({
                         vote: {
                             "pictureId": id,
                             location: location,
                             voteType: value,
-                            pictureLocation: $scope.picture.location
+                            pictureLocation: $scope.picture.location,
+                            pictureInstitution: $scope.picture.institution
                         },
                         "uuid": window.device.uuid
                     }, function () {
@@ -286,7 +315,8 @@ angular.module('controllers', [])
                 });
             }
         }])
-    .controller('AddSchoolCtrl', ['$scope', '$http', '$state', 'User', function ($scope, $http, $state, User) {
+    .controller('AddSchoolCtrl', ['$scope', '$http', '$state', '$ionicHistory', 'User', function ($scope, $http, $state, $ionicHistory, User) {
+        $scope.goBack = $ionicHistory.goBack;
         $scope.data = {"schools": [], "search": ''};
         var universities;
         $http.get('ressources/universities.json').
@@ -302,8 +332,8 @@ angular.module('controllers', [])
                 if (university.toLowerCase().indexOf($scope.data.search.toLowerCase()) !== -1) return true;
             })
         };
-        $scope.schoolSelected = function (school) {
-            User.schoolSelected({school: school}, function (reply) {
+        $scope.schoolSelected = function (institution) {
+            User.schoolSelected({institution: institution}, function (reply) {
                 $state.go('app.settings');
             })
         }

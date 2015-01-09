@@ -42,11 +42,11 @@
 
     <div class="bar bar-footer">
         <a class="tab-item col-49" ng-click="vote(picture._id,false)">
-            <i class="icon ion-thumbsdown" ng-class="picture.voted===false?'red':''"></i>
+            <i class="icon ion-thumbsdown" ng-class="picture.vote===false?'red':''"></i>
         </a>
         <span class="tab-item"><b>{{picture.score}}</b></span>
         <a class="tab-item  col-49" ng-click="vote(picture._id,true)">
-            <i class="icon ion-thumbsup" ng-class="picture.voted===true?'green':''"></i>
+            <i class="icon ion-thumbsup" ng-class="picture.vote===true?'green':''"></i>
         </a>
     </div>
 </ion-view>

@@ -8,7 +8,6 @@ if (!window.device)window.device = {};
 if (!window.device.uuid)window.device.uuid = 123;
 
 angular.module('services', ['ngResource'])
-    // default service. need to be rewritten
 
     .factory('Picture', ['$resource', function ($resource) {
         var trendingPictures = {};
@@ -54,64 +53,76 @@ angular.module('services', ['ngResource'])
                 })
             }
         };
-        User.schoolSelected = function (school, next) {
-            $http.post(url + 'schoolSelected?uuid=' + window.device.uuid, school).success(function (res) {
+        User.schoolSelected = function (institution, next) {
+            $http.post(url + 'schoolSelected?uuid=' + window.device.uuid, institution).success(function (res) {
                 if (res.success) {
-                    $rootScope.user.school = school;
+                    $rootScope.user.institution = institution.institution;
                     next(res);
                 } else next(res);
             })
         };
         return User;
     }])
-    .factory('Location', ['$http', '$rootScope', '$ionicPlatform', function ($http, $rootScope, $ionicPlatform) {
-        //todo refactor with no rootscope
-        //todo every 5 mins renew location
-        $rootScope.findingLocation = false;
-        return function (next) {
-            if (!$rootScope.findingLocation && !$rootScope.myLocation) {
-                $rootScope.findingLocation = true;
-                $ionicPlatform.ready(function () {
-                    navigator.geolocation.getCurrentPosition(function (position) {
-                            $http({
-                                method: 'GET',
-                                url: 'http://nominatim.openstreetmap.org/reverse?format=json&lat=' + position.coords.latitude + '&lon=' + position.coords.longitude + '&zoom=18&addressdetails=1'
-                            }).
-                                success(function (data, status, headers, config) {
-                                    $rootScope.findingLocation = false;
-                                    //delete unused keys
-                                    var used = ['county', 'state', 'country'];
-                                    for (var key in data.address) {
-                                        if (used.indexOf(key) == -1) delete data.address[key];
-                                    }
+    .factory('Location', ['$http', '$ionicPlatform', function ($http, $ionicPlatform) {
 
-                                    $rootScope.myLocation = data.address;
-                                    next($rootScope.myLocation);
-                                })
-                                .error(function (data) {
-                                    $rootScope.findingLocation = false;
-                                    console.log('couldn\'t get location', data);
-                                    next($rootScope.myLocation)
-                                })
-                        },
-                        function (data) {
-                            $rootScope.findingLocation = false;
-                            console.log('couldn\'t get location', data);
-                            next()
-                        });
+        var location,
+            findingLocation = false;
+
+        document.addEventListener("resume", function () {
+            getLocation(function () {
+            });
+        }, false);
+
+        setInterval(function () {
+            getLocation(function () {
+            });
+        }, 300000);
+
+        function getLocation(next) {
+            $ionicPlatform.ready(function () {
+                navigator.geolocation.getCurrentPosition(function (position) {
+                        $http({
+                            method: 'GET',
+                            url: 'http://nominatim.openstreetmap.org/reverse?format=json&lat=' + position.coords.latitude + '&lon=' + position.coords.longitude + '&zoom=18&addressdetails=1'
+                        }).
+                            success(function (data, status, headers, config) {
+                                //delete unused keys
+                                var used = ['county', 'state', 'country'];
+                                for (var key in data.address) {
+                                    if (used.indexOf(key) == -1) delete data.address[key];
+                                }
+                                location = data.address;
+                                next(true);
+                            })
+                            .error(function (data) {
+                                console.log('couldn\'t get location', data);
+                                next(false)
+                            })
+                    },
+                    function (data) {
+                        console.log('couldn\'t get location', data);
+                        next(false)
+                    });
+            });
+        }
+
+        return function LocationService(next) {
+            if (!location && !findingLocation) {
+                findingLocation = true;
+                getLocation(function (res) {
+                    findingLocation = false;
+                    if (res) next(location);
+                    else LocationService(next)
                 });
-            } else if ($rootScope.myLocation) {
-                next($rootScope.myLocation);
+            }
+            else if (location) {
+                next(location);
             } else {
-                function wait() {
-                    setTimeout(function () {
-                        if ($rootScope.myLocation) next($rootScope.myLocation);
-                        else wait();
-                    }, 1000)
-                }
-
-                wait();
+                setTimeout(function () {  //if we are trying to find the location currently we just wait.
+                    LocationService(next);
+                }, 1000)
             }
         }
-    }]);
+    }])
+;
 

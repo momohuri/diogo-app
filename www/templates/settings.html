@@ -15,21 +15,21 @@
                 </label>
                 <label class="item item-input item-stacked-label">
                     <span class="input-label"><b>{{'SETTING_SCHOOL_LABEL' | translate}}</b></span>
-                    <span ng-show="!user.school">
+                    <span ng-show="!user.institution">
                     <a href="#/app/addSchool">
-                        <button class="button button-royal right" style="margin-top: -23px">{{'SETTINGS_ADD_SCHOOL' |
+                        <button class="button button-royal right">{{'SETTINGS_ADD_SCHOOL' |
                             translate}}
                         </button>
                     </a> <br>
                     <span class="input-label"> {{'SETTINGS_NO_SCHOOL' | translate}}</span>
                         </span>
-                    <span ng-show="user.school">
+                    <span ng-show="user.institution">
                     <a href="#/app/addSchool">
-                        <button class="button button-royal right" style="margin-top: -23px">{{'SETTINGS_CHANGE_SCHOOL' |
+                        <button class="button button-royal right">{{'SETTINGS_CHANGE_SCHOOL' |
                             translate}}
                         </button>
                     </a> <br>
-                    <span class="input-label"> {{ user.school}}</span>
+                    <div class="col-75 item-text-wrap"> <p>{{ user.institution }}</p></div>
                         </span>
                 </label>
             </div>

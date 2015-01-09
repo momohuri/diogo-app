@@ -144,6 +144,8 @@ angular.module('starter', ['ionic', 'controllers', 'services', 'directives', 'Fi
             'country': "Country",
             'state': 'State',
             'county': 'County',
+            'TRENDING_MENU_LABEL_SCHOOL': 'School',
+            'TRENDING_MENU_NO_PICTURE': 'There is no picture in this contest. You should upload one!',
 
             'SIGNIN_PAGE_NAME': 'Sign Up',
             'SIGNIN_BUTTON_SIGNIN': 'Sign Up',
