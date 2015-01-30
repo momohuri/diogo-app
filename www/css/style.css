@@ -10,8 +10,8 @@
 }
 
 .full_screen_img {
-    max-height: 50vh;
-    width: auto;
+    width: 100%;
+    height: auto;
 }
 
 .red {
@@ -22,26 +22,25 @@
     color: green;
 }
 
-.rank-icon{
-    height:50px;
+.rank-icon {
+    height: 50px;
     position: absolute;
     margin-left: -116px;
-    margin-top:-15px;
+    margin-top: -15px;
     z-index: 1;
 }
 
-.picture-description{
+.picture-description {
     border-top: 1px solid #ddd;
-    border-bottom : 1px solid #ddd;
+    border-bottom: 1px solid #ddd;
     margin-left: 5px;
 }
 
-.right{
-    float:right;
+.right {
+    float: right;
 }
 
-
-.thumbnail{
+.thumbnail {
     left: 10px;
     max-height: 80px;
     max-width: 80px;

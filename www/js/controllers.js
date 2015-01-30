@@ -5,17 +5,6 @@ angular.module('controllers', [])
         User.getUserInfo(function (points) {
         });
 
-
-        $ionicPlatform.ready(function () {
-            if (typeof analytics !== 'undefined') {
-                analytics.startTrackerWithId('UA-58343549-1');
-                analytics.trackView('app');
-                console.log("starting analytics");
-            }
-            else {
-                console.log("Google Analytics plugin could not be loaded.")
-            }
-        });
     }])
 
     .controller('AppLoading', ['$state', "Location", "$ionicLoading", function ($state, Location, $ionicLoading) {
@@ -67,8 +56,8 @@ angular.module('controllers', [])
         }
     }])
 
-    .controller('uploadPictureCtrl', ['$scope', '$http', "$state", '$ionicPopup', '$translate', 'Picture',
-        function ($scope, $http, $state, $ionicPopup, $translate, Picture) {
+    .controller('uploadPictureCtrl', ['$scope', '$http', "$state", '$ionicPopup', '$ionicModal', '$translate', 'Picture', 'Location',
+        function ($scope, $http, $state, $ionicPopup, $ionicModal, $translate, Picture, Location) {
             $state.get('app.uploadPicture').onEnter = takePicture;
             takePicture();
 
@@ -80,6 +69,30 @@ angular.module('controllers', [])
 //                pictureSource = navigator.camera.PictureSourceType.PHOTOLIBRARY;
 //                processPicture()
 //            };
+
+
+            $scope.myCroppedImage = '';
+            $ionicModal.fromTemplateUrl('templates/ModalCropImage.html', {
+                scope: $scope,
+                animation: 'slide-in-up',
+                backdropClickToClose: false
+            }).then(function (modal) {
+                $scope.modal = modal;
+            });
+            $scope.crop = function (myCroppedImage) {
+                $scope.mypicture = myCroppedImage;
+                $scope.modal.hide();
+            };
+            $scope.cancel = function () {
+                $state.reload();
+            };
+
+            //Cleanup the modal when we're done with it!
+            $scope.$on('$destroy', function () {
+                $scope.modal.remove();
+            });
+
+
             function takePicture() {
                 pictureSource = navigator.camera.PictureSourceType.CAMERA;
                 processPicture()
@@ -88,18 +101,17 @@ angular.module('controllers', [])
             function processPicture() {
                 $scope.canUpload = true;
                 var options = {
-                    quality: 50,
-                    destinationType: Camera.DestinationType.DATA_URL,
+                    quality: 70,
+                    destinationType: Camera.DestinationType.FILE_URI,
                     sourceType: pictureSource,
                     encodingType: Camera.EncodingType.JPEG,
                     allowEdit: false,
-                    targetWidth: 600,
-                    targetHeight: 600,
                     correctOrientation: true
                 };
                 navigator.camera.getPicture(
                     function (image64) {
                         $scope.mypicture = image64;
+                        $scope.modal.show();
                     },
                     function (err) {
                         $state.go('app.vote');
@@ -110,12 +122,13 @@ angular.module('controllers', [])
                     options);
             }
 
+
             $scope.upload = function () {
                 Location(function (location) {
                     $scope.uploading = true;
                     var picture = {};
                     picture.name = $scope.obj.name;
-                    picture.base64 = 'data:image/jpeg;base64,' + $scope.mypicture;
+                    picture.base64 = $scope.mypicture;
                     picture.location = location;
                     Picture.uploadPicture({picture: picture, uuid: device.uuid}, function (reply) {
                         var message = reply.success ? 'UPLOAD_MESSAGE_SUCCESSFUL' : 'UPLOAD_MESSAGE_FAIL';
@@ -134,8 +147,8 @@ angular.module('controllers', [])
             }
         }])
 
-    .controller('VoteCtrl', ['$scope', '$translate', '$state', '$ionicPopup', '$rootScope', 'Location', 'Picture', 'User',
-        function ($scope, $translate, $state, $ionicPopup, $rootScope, Location, Picture, User) {
+    .controller('VoteCtrl', ['$scope', '$translate', '$state', '$ionicPopup', '$rootScope', 'Location', 'Picture',
+        function ($scope, $translate, $state, $ionicPopup, $rootScope, Location, Picture) {
             $scope.height = document.getElementsByTagName('ion-content')[0].clientHeight / 1.5 + 'px';
             $scope.pictures = [];
 
@@ -188,12 +201,41 @@ angular.module('controllers', [])
             }
         }])
 
-    .controller('TrendingMenuCtrl', ['$scope', '$state', '$ionicPopup', '$translate', 'Location', 'Picture',
-        function ($scope, $state, $ionicPopup, $translate, Location, Picture) {
-            if (typeof analytics !== "undefined") {
-                analytics.trackView("Awesome Controller");
-            }
+    .controller('TrendingMenuCtrl', ['$scope', '$state', '$ionicPopup', '$translate', '$ionicModal', 'Location', 'Picture',
+        function ($scope, $state, $ionicPopup, $translate, $ionicModal, Location, Picture) {
             $scope.loading = true;
+
+
+            //$scope.mypicture = 'img/no_post.jpg';
+            //$scope.myCroppedImage = '';
+            //
+            //
+            //$ionicModal.fromTemplateUrl('templates/ModalCropImage.html', {
+            //    scope: $scope,
+            //    animation: 'slide-in-up',
+            //    backdropClickToClose: false
+            //}).then(function (modal) {
+            //    $scope.modal = modal;
+            //    $scope.openModal();
+            //});
+            //
+            //$scope.openModal = function () {
+            //    $scope.modal.show();
+            //};
+            //
+            //$scope.closeModal = function () {
+            //    //$scope.modal.hide();
+            //};
+            //
+            //$scope.crop = function (myCroppedImage) {
+            //    $scope.mypicture = myCroppedImage;
+            //};
+            //
+            ////Cleanup the modal when we're done with it!
+            //$scope.$on('$destroy', function () {
+            //    $scope.modal.remove();
+            //});
+
 
             $state.get('app.trendingMenu').onEnter = function () {
                 getTopPicture();
@@ -229,16 +271,28 @@ angular.module('controllers', [])
             };
             $scope.locationType = $stateParams.locationType;
 
-            $state.get('app.trending').onEnter = function () {
-                getTrendingPicture();
-            };
+            $state.get('app.trending').onEnter = getTrendingPicture;
+
             getTrendingPicture();
             function getTrendingPicture() {
-                Location(function (location) {
-                    Picture.getTrendingPicture({type: $stateParams.locationType, location: location}, function (docs) {
+                if ($stateParams.locationType == 'institution') {
+                    Picture.getTrendingPicture({
+                        type: $stateParams.locationType,
+                        institution: $stateParams.location
+                    }, function (docs) {
                         $scope.pictures = docs.pictures;
                     })
-                });
+                } else {
+                    Location(function (location) {
+                        Picture.getTrendingPicture({
+                            type: $stateParams.locationType,
+                            location: location
+                        }, function (docs) {
+                            $scope.pictures = docs.pictures;
+                        })
+                    })
+                }
+
             }
 
         }])

@@ -81,9 +81,11 @@ angular.module('services', ['ngResource'])
         function getLocation(next) {
             $ionicPlatform.ready(function () {
                 navigator.geolocation.getCurrentPosition(function (position) {
+                        //todo fallback form one url to an other
                         $http({
                             method: 'GET',
-                            url: 'http://nominatim.openstreetmap.org/reverse?format=json&lat=' + position.coords.latitude + '&lon=' + position.coords.longitude + '&zoom=18&addressdetails=1'
+                            url: 'http://open.mapquestapi.com/nominatim/v1/reverse.php?format=json&lat=' + position.coords.latitude + '&lon=' + position.coords.longitude + ''
+                            //url: 'http://nominatim.openstreetmap.org/reverse?format=json&lat=' + position.coords.latitude + '&lon=' + position.coords.longitude + '&zoom=18&addressdetails=1'
                         }).
                             success(function (data, status, headers, config) {
                                 //delete unused keys
@@ -120,7 +122,8 @@ angular.module('services', ['ngResource'])
             } else {
                 setTimeout(function () {  //if we are trying to find the location currently we just wait.
                     LocationService(next);
-                }, 1000)
+                }, 1000);
+                next({})
             }
         }
     }])
